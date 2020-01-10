@@ -9,7 +9,8 @@
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	
-  <link rel="stylesheet" href="style.css">
+	<!-- Zusätzliches CSS -->
+	<link rel="stylesheet" href="style.css">
 	
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -18,36 +19,107 @@
     
     
     <!-- Google Fonts -->
-    <!-- Font Type: Patrick Hand -->
     <link href="https://fonts.googleapis.com/css?family=Bitter" rel="stylesheet"> 
     
 </head>
 <body class="bg-white">
+
+
+<?php
+
+# **********************************************************
+# ***         LEI definieren und Variable definieren     ***
+# **********************************************************
+
+# Werte aus der Formulareingabe auslesen
+# Dabei werden Sicherheitsabfragen unternommen
+# htmlentities --> Aus der Zeichenkette werden HTML-Tags in Code um. 
+# strip_tags   --> Aus der Zeichenkette werden HTML- und PHP-Tags entfernt.
+# preg_replace --> Aus der Zeichenkette werden bestimmte Zeichen gelöscht.
+if(isset($_GET['LEI'])) {
+	$LEI = preg_replace('![^0-9A-Z]!', '', strip_tags(htmlentities($_GET['LEI']))) ;
+} else {
+	$LEI = "353800ZR4YBXWTFO6014"; 
+} // Ende der If-Abfrage
+
+
+# $LEI       = "549300JNXF87XCUMN685";
+# $LEI       = "353800ZR4YBXWTFO6014";
+$Basis_URL = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
+$Abruf_URL = $Basis_URL . $LEI;
+$Suche     = $LEI;
+
+	# **********************************************************
+	# ***        LEI-Daten  herunterladen           ***
+	# ********************************************************** 
+
+
+	$datei = $Abruf_URL;
+	if (function_exists('curl_version'))
+	{
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $datei);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		$content = curl_exec($curl);
+		curl_close($curl);
+		# echo "LEI mit CURL abgerufen." . "<br>"; 
+	} else if (file_get_contents(__FILE__) && ini_get('allow_url_fopen'))
+	{
+		$content = file_get_contents($datei);
+		# echo "LEI mit FOPEN abgerufen." . "<br>"; 
+	} else {
+		# echo "Sie haben weder cURL installiert, ";
+		# echo "noch allow_url_fopen aktiviert. ";
+		# echo "Bitte aktivieren/installieren ";
+		# echo "allow_url_fopen oder Curl!";
+	}
+$json_content=json_decode($content, true);
+
+?>
+
 	
 	<!--Container-->	
 	<div class="container">
-	
+		<?php 
+		foreach ($json_content as $element) {
+		?>
+		
 		<!--Navbar-->	
 		<nav class="navbar navbar-expand-md bg-dark navbar-dark">
-			<form class="form-inline col-11" action="/action_page.php">
+			<?php
+			echo '<form class="form-inline col-11" action="https://LEI.damian-malik.de?LEI=">';
+
+			?>
 				<input class="form-control mr-sm-2 font-Bitter" type="text" placeholder="LEI Suche">
 				<button class="btn btn-outline-light font-Bitter" type="submit">Suche</button>
 			</form>
 		</nav> 
 	
 		<!-- h1 with padding-top 3 -->
-		<p class="h1 pt-3 pb-3 font-Bitter">Adresse von LEI 988400T354OS9KEUI974</p>
+		<?php
+			echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
+			    . $element["LEI"]["$"] 
+			    . ' ';
+				if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
+					echo '<button type="button" class="btn btn-success float-right" disabled>' . $element["Entity"]["EntityStatus"]["$"] . '</button>';
+				} else {
+					echo '<button type="button" class="btn btn-danger float-right" disabled>' . $element["Entity"]["EntityStatus"]["$"] . '</button>';
+				}  
+			echo '</p>'; 
+		} 
 		
-		<!-- Abstand -->
-		<div class="border-top my-3"></div>
+		?>
 		
-		<!-- URL-Link und JSON Inhalt -->
-		<p class="font-weight-bold font-Bitter">Abruf URL:</p>
-		<p class="font-Bitter">https://....</p>
+		<?php
+		echo '<p class="font-Bitter"><b>URL: </b>' . $Abruf_URL . '</p>';
+		
+		?>
 		
 		<button type="button" class="btn btn-outline-dark btn-sm font-Bitter" data-toggle="collapse" data-target="#demo">zeige JSON...</button>
 		<div id="demo" class="pt-3 small collapse font-Bitter">
-			[{"LEI":{"$":"549300JNXF87XCUMN685"},"Entity":{"LegalName":{"$":"CBC Pension Board of Trustees"},"LegalAddress":{"FirstAddressLine":{"$":"99 Bank Street"},"City":{"$":"Ottawa"},"Region":{"$":"CA-ON"},"Country":{"$":"CA"}},"HeadquartersAddress":{"FirstAddressLine":{"$":"99 Bank Street"},"City":{"$":"Ottawa"},"Region":{"$":"CA-ON"},"Country":{"$":"CA"}},"RegistrationAuthority":{"RegistrationAuthorityID":{"$":"RA999999"}},"LegalJurisdiction":{"$":"CA-ON"},"LegalForm":{"EntityLegalFormCode":{"$":"8888"},"OtherLegalForm":{"$":"Other"}},"EntityStatus":{"$":"ACTIVE"}},"Registration":{"InitialRegistrationDate":{"$":"2014-03-20T01:30:57.914Z"},"LastUpdateDate":{"$":"2019-09-12T19:19:20.451Z"},"RegistrationStatus":{"$":"ISSUED"},"NextRenewalDate":{"$":"2020-09-18T12:10:21.358Z"},"ManagingLOU":{"$":"5493001KJTIIGC8Y1R12"},"ValidationSources":{"$":"ENTITY_SUPPLIED_ONLY"},"ValidationAuthority":{"ValidationAuthorityID":{"$":"RA999999"}}}}]
+			<?php
+			echo $content;
+			?>
 		</div>
 		
 		<!-- Abstand -->
@@ -59,28 +131,103 @@
 			<div class="card" style="width: 18rem;">
 				<div class="card-header text-white bg-dark">Legal Address</div>
 				<ul class="list-group list-group-flush bg-light">
-					<li class="list-group-item">
-						<address>
-							Example 1 Inc.<br>
-							1234 Example Street<br>
-							Antartica, Example 0987<br>
-							(123) 456-7890
-						</address>
-					</li>
+				<?php
+				foreach ($json_content as $element) {
+					echo '<li class="list-group-item">';
+						echo "<small><b>Legal Name</b></small><br>";
+						echo $element["Entity"]["LegalName"]["$"];
+					echo '</li>';
+					# Prüfung, ob OtherEntityName vorhanden ist
+					if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Other Entity Name</b></small><br>";
+							echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
+						echo '</li>';
+					}
+					echo '<li class="list-group-item">';
+						echo "<small><b>First Address Line</b></small><br>";
+						echo $element["Entity"]["LegalAddress"]["FirstAddressLine"]["$"];
+					echo '</li>';
+					# Prüfung, ob AdditionalAddressLine vorhanden ist
+					if( isset( $element["Entity"]["LegalAddress"]["AdditionalAddressLine"]["0"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Additional Address Line</b></small><br>";
+							echo $element["Entity"]["LegalAddress"]["AdditionalAddressLine"]["0"]["$"];
+						echo '</li>';
+					}
+					# Prüfung, ob MailRouting vorhanden ist
+					if( isset( $element["Entity"]["LegalAddress"]["MailRouting"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Mail Routing</b></small><br>";
+							echo $element["Entity"]["LegalAddress"]["MailRouting"]["$"];
+						echo '</li>';
+					}
+					echo '<li class="list-group-item">';
+						echo "<small><b>City</b></small><br>";
+						if( isset( $element["Entity"]["LegalAddress"]["PostalCode"]["$"] ) ){
+							echo $element["Entity"]["LegalAddress"]["PostalCode"]["$"];
+							echo " ";
+						}
+						echo $element["Entity"]["LegalAddress"]["City"]["$"];
+					echo '</li>';
+					echo '<li class="list-group-item">';
+						echo "<small><b>Country</b></small><br>";
+						echo $element["Entity"]["LegalAddress"]["Country"]["$"];
+					echo '</li>';
+				}
+				?>
+				
 				</ul>
 			</div>
 			
 			<div class="card" style="width: 18rem;">
 				<div class="card-header text-white bg-dark">Headquarters Address</div>
 				<ul class="list-group list-group-flush bg-light">
-					<li class="list-group-item">
-						<address>
-							Example 1 Inc.<br>
-							1234 Example Street<br>
-							Antartica, Example 0987<br>
-							(123) 456-7890
-						</address>
-					</li>
+					<?php
+				foreach ($json_content as $element) {
+					echo '<li class="list-group-item">';
+						echo "<small><b>Legal Name</b></small><br>";
+						echo $element["Entity"]["LegalName"]["$"];
+					echo '</li>';
+					# Prüfung, ob OtherEntityName vorhanden ist
+					if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Other Entity Name</b></small><br>";
+							echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
+						echo '</li>';
+					}
+					echo '<li class="list-group-item">';
+						echo "<small><b>First Address Line</b></small><br>";
+						echo $element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"];
+					echo '</li>';
+					# Prüfung, ob AdditionalAddressLine vorhanden ist
+					if( isset( $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Additional Address Line</b></small><br>";
+							echo $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"];
+						echo '</li>';
+					}
+					# Prüfung, ob MailRouting vorhanden ist
+					if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Mail Routing</b></small><br>";
+							echo $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
+						echo '</li>';
+					}
+					echo '<li class="list-group-item">';
+						echo "<small><b>City</b></small><br>";
+						if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
+							echo $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"];
+							echo " ";
+						}
+						echo $element["Entity"]["HeadquartersAddress"]["City"]["$"];
+					echo '</li>';
+					echo '<li class="list-group-item">';
+						echo "<small><b>Country</b></small><br>";
+						echo $element["Entity"]["HeadquartersAddress"]["Country"]["$"];
+					echo '</li>';
+				}
+				?>
 				</ul>
 			</div>
 			
@@ -108,9 +255,8 @@
 				</ul>
 			</div>
 		</div>
-	
-		<!-- Abstand -->
-		<div class="border-top my-3"></div>
+		<br>
+		
 	
 		<!-- Button -->
 		<a class="btn btn-dark font-Bitter" href="#" role="button">CSV Export</a>
