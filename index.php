@@ -124,7 +124,7 @@
 		<!-- Link -->
 		<nav class="navbar justify-content-end navbar-light bg-light font-Bitter">
 			
-			<a target="_blank" class="navbar-brand" href="https://www.google.de/">GitHub
+			<a target="_blank" class="navbar-brand" href="https://github.com/DamianMalik/LEI">GitHub
 				<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="30" height="30" class="d-inline-block align-top" alt="">
 			</a>
 			
