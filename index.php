@@ -32,8 +32,8 @@
 # **********************************************************
 
 # Werte aus der Formulareingabe auslesen
-# Dabei werden Sicherheitsabfragen unternommen
-# htmlentities --> Aus der Zeichenkette werden HTML-Tags in Code um. 
+# Hierbei werden unerwünschte Zeichen und Tags entfernt
+# htmlentities --> Aus der Zeichenkette werden HTML-Tags in Code umgewandelt. 
 # strip_tags   --> Aus der Zeichenkette werden HTML- und PHP-Tags entfernt.
 # preg_replace --> Aus der Zeichenkette werden bestimmte Zeichen gelöscht.
 if(isset($_GET['LEI'])) {
@@ -43,8 +43,6 @@ if(isset($_GET['LEI'])) {
 } // Ende der If-Abfrage
 
 
-# $LEI       = "549300JNXF87XCUMN685";
-# $LEI       = "353800ZR4YBXWTFO6014";
 $Basis_URL = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
 $Abruf_URL = $Basis_URL . $LEI;
 $Suche     = $LEI;
@@ -86,11 +84,8 @@ $json_content=json_decode($content, true);
 		
 		<!--Navbar-->	
 		<nav class="navbar navbar-expand-md bg-dark navbar-dark">
-			<?php
-			echo '<form class="form-inline col-11" action="https://LEI.damian-malik.de?LEI=">';
-
-			?>
-				<input class="form-control mr-sm-2 font-Bitter" type="text" placeholder="LEI Suche">
+			<form class="form-inline col-11">
+				<input class="form-control mr-sm-2 font-Bitter" type="text" name="LEI" placeholder="LEI Suche">
 				<button class="btn btn-outline-light font-Bitter" type="submit">Suche</button>
 			</form>
 		</nav> 
@@ -140,7 +135,11 @@ $json_content=json_decode($content, true);
 					# Prüfung, ob OtherEntityName vorhanden ist
 					if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) ){
 						echo '<li class="list-group-item">';
-							echo "<small><b>Other Entity Name</b></small><br>";
+							echo "<small><b>Other Entity Name"
+							. " ("
+							. $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["@type"]
+							. ")"
+							. "</b></small><br>";
 							echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
 						echo '</li>';
 					}
@@ -183,7 +182,7 @@ $json_content=json_decode($content, true);
 			<div class="card" style="width: 18rem;">
 				<div class="card-header text-white bg-dark">Headquarters Address</div>
 				<ul class="list-group list-group-flush bg-light">
-					<?php
+				<?php
 				foreach ($json_content as $element) {
 					echo '<li class="list-group-item">';
 						echo "<small><b>Legal Name</b></small><br>";
@@ -192,7 +191,11 @@ $json_content=json_decode($content, true);
 					# Prüfung, ob OtherEntityName vorhanden ist
 					if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) ){
 						echo '<li class="list-group-item">';
-							echo "<small><b>Other Entity Name</b></small><br>";
+							echo "<small><b>Other Entity Name"
+							. " ("
+							. $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["@type"]
+							. ")"
+							. "</b></small><br>";
 							echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
 						echo '</li>';
 					}
@@ -234,24 +237,65 @@ $json_content=json_decode($content, true);
 			<div class="card" style="width: 18rem;">
 				<div class="card-header text-white bg-info">Export Adresse <small>(Zeilen 1-6)</small></div>
 				<ul class="list-group list-group-flush bg-light">
-					<li class="list-group-item">
-						Example 1 Inc.
-					</li>
-					<li class="list-group-item">
-						1234 Example Street
-					</li>
-					<li class="list-group-item">
-						Antartica, Example 0987
-					</li>
-					<li class="list-group-item">
-						(123) 456-7890
-					</li>
-					<li class="list-group-item">
-						x
-					</li>
-					<li class="list-group-item">
-						x
-					</li>
+					
+				<?php
+				foreach ($json_content as $element) {
+					# Nur Aktive Entity wird ausgegeben. 
+					# Inactive Entity wird nicht ausgegeben. 
+					if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
+					
+					# Prüfung, ob OtherEntityName vorhanden ist
+					if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) && 
+					$element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["@type"] != "PREVIOUS_LEGAL_NAME"
+					){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Other Entity Name</b></small><br>";
+							echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
+						echo '</li>';
+					} else {
+						echo '<li class="list-group-item">';
+						echo "<small><b>Legal Name</b></small><br>";
+						echo $element["Entity"]["LegalName"]["$"];
+						echo '</li>';
+					}
+					
+					
+					
+					echo '<li class="list-group-item">';
+						echo "<small><b>First Address Line</b></small><br>";
+						echo $element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"];
+					echo '</li>';
+					# Prüfung, ob AdditionalAddressLine vorhanden ist
+					if( isset( $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Additional Address Line</b></small><br>";
+							echo $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"];
+						echo '</li>';
+					}
+					# Prüfung, ob MailRouting vorhanden ist
+					if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Mail Routing</b></small><br>";
+							echo $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
+						echo '</li>';
+					}
+					echo '<li class="list-group-item">';
+						echo "<small><b>City</b></small><br>";
+						if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
+							echo $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"];
+							echo " ";
+						}
+						echo strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
+					echo '</li>';
+					echo '<li class="list-group-item">';
+						echo "<small><b>Country</b></small><br>";
+						echo $element["Entity"]["HeadquartersAddress"]["Country"]["$"];
+					echo '</li>';
+					}
+				}
+				?>	
+					
+					
 				</ul>
 			</div>
 		</div>
@@ -259,7 +303,7 @@ $json_content=json_decode($content, true);
 		
 	
 		<!-- Button -->
-		<a class="btn btn-dark font-Bitter" href="#" role="button">CSV Export</a>
+		<a class="btn btn-dark font-Bitter disabled" href="#" role="button">CSV Export</a>
 	
 		<!-- Button -->
 		<a class="btn btn-dark font-Bitter disabled" href="#" role="button">Serienbrief Export</a>
