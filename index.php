@@ -45,24 +45,21 @@ if(isset($_GET['LEI'])) {
 
 $Basis_URL = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
 $Abruf_URL = $Basis_URL . $LEI;
-$Suche     = $LEI;
 
 	# **********************************************************
-	# ***        LEI-Daten  herunterladen           ***
+	# ***        LEI-Daten  herunterladen                    ***
 	# ********************************************************** 
 
 
 	$datei = $Abruf_URL;
-	if (function_exists('curl_version'))
-	{
+	if (function_exists('curl_version')) {
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $datei);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		$content = curl_exec($curl);
 		curl_close($curl);
 		# echo "LEI mit CURL abgerufen." . "<br>"; 
-	} else if (file_get_contents(__FILE__) && ini_get('allow_url_fopen'))
-	{
+	} else if (file_get_contents(__FILE__) && ini_get('allow_url_fopen')) {
 		$content = file_get_contents($datei);
 		# echo "LEI mit FOPEN abgerufen." . "<br>"; 
 	} else {
@@ -124,6 +121,7 @@ $json_content=json_decode($content, true);
 		
 		<!-- Karten -->
 		<div class="card-deck font-Bitter">
+			<!-- Karte 1 -->
 			<div class="card" style="width: 18rem;">
 				<div class="card-header text-white bg-dark">Legal Address</div>
 				<ul class="list-group list-group-flush bg-light">
@@ -180,6 +178,7 @@ $json_content=json_decode($content, true);
 				</ul>
 			</div>
 			
+			<!-- Karte 2 -->
 			<div class="card" style="width: 18rem;">
 				<div class="card-header text-white bg-dark">Headquarters Address</div>
 				<ul class="list-group list-group-flush bg-light">
@@ -235,74 +234,69 @@ $json_content=json_decode($content, true);
 				</ul>
 			</div>
 			
-			<div class="card" style="width: 18rem;">
-				<div class="card-header text-white bg-info">Export Adresse</div>
-				<ul class="list-group list-group-flush bg-light">
+			<!-- Karte 3 -->
+			<?php
+			
+			
+			// Variable als Array deklarieren
+			$Adresszeilen = array();
+
+			foreach ($json_content as $element) {
+				# Nur Aktive Entity wird ausgegeben. 
+				# Inactive Entity wird nicht ausgegeben. 
+				if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
 					
-				<?php
-				foreach ($json_content as $element) {
-					# Nur Aktive Entity wird ausgegeben. 
-					# Inactive Entity wird nicht ausgegeben. 
-					if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
-					
+					# Entity Name
 					# Prüfung, ob OtherEntityName vorhanden ist
 					if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) && 
 					$element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["@type"] != "PREVIOUS_LEGAL_NAME"
 					){
-						echo '<li class="list-group-item">';
-							echo "<small><b>Adresszeile 1</b></small><br>";
-							echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
-						echo '</li>';
+						$Adresszeilen[1] = $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
 					} else {
-						echo '<li class="list-group-item">';
-						echo "<small><b>Adresszeile 1</b></small><br>";
-						echo $element["Entity"]["LegalName"]["$"];
-						echo '</li>';
+						$Adresszeilen[1] = $element["Entity"]["LegalName"]["$"];
 					}
 					
+					# First Adress Line 
+					$Adresszeilen[] =  $element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"];
 					
-					
-					echo '<li class="list-group-item">';
-						echo "<small><b>Adresszeile 2</b></small><br>";
-						echo $element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"];
-					echo '</li>';
+					# Zusatz-Adressangabe
 					# Prüfung, ob AdditionalAddressLine vorhanden ist
 					if( isset( $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"] ) ){
-						echo '<li class="list-group-item">';
-							echo "<small><b>Adresszeile 3</b></small><br>";
-							echo $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"];
-						echo '</li>';
+						$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"];
 					}
+					
 					# Prüfung, ob MailRouting vorhanden ist
 					if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
+						$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
+					}
+					
+					# PLZ und Ort
+					if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
+							$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] 
+							                . " " 
+											. strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
+						} else {
+							echo strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
+						}
+				}
+			} 
+			?>
+			<div class="card" style="width: 18rem;">
+				<div class="card-header text-white bg-info">Export Adresse <small>(Zeilen 1-6)</small></div>
+				<ul class="list-group list-group-flush bg-light">
+					<?php
+					# Alle Array Werte ausgeben
+					foreach ($Adresszeilen as $zeile => $inhalt) {
 						echo '<li class="list-group-item">';
-							echo "<small><b>Adresszeile 4</b></small><br>";
-							echo $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
+							echo "<small><b>Adresszeile " . $zeile . "</b></small><br>";
+							echo $inhalt . "<br>";
 						echo '</li>';
 					}
-					echo '<li class="list-group-item">';
-						echo "<small><b>Adresszeile 5</b></small><br>";
-						if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
-							echo $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"];
-							echo " ";
-						}
-						echo strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
-					echo '</li>';
-					echo '<li class="list-group-item">';
-						echo "<small><b>Adresszeile 6</b></small><br>";
-						echo $element["Entity"]["HeadquartersAddress"]["Country"]["$"];
-					echo '</li>';
-					}
-				}
-				?>	
-					
-					
+					?>
 				</ul>
 			</div>
 		</div>
 		<br>
-		
-	
 		<!-- Button -->
 		<a class="btn btn-dark font-Bitter disabled" href="#" role="button">CSV Export</a>
 	
