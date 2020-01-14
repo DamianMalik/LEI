@@ -82,7 +82,7 @@ $json_content=json_decode($content, true);
 		<!--Navbar-->	
 		<nav class="navbar navbar-expand-md bg-dark navbar-dark">
 			<form class="form-inline col-11">
-				<input class="form-control mr-sm-2 font-Bitter" type="text" name="LEI" placeholder="LEI Suche">
+				<input class="form-control mr-sm-2 font-Bitter" type="text" name="LEI" placeholder="LEI Nummer">
 				<button class="btn btn-outline-light font-Bitter" type="submit">Suche</button>
 			</form>
 		</nav> 
@@ -142,6 +142,13 @@ $json_content=json_decode($content, true);
 							echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
 						echo '</li>';
 					}
+					# Prüfung, ob MailRouting vorhanden ist
+					if( isset( $element["Entity"]["LegalAddress"]["MailRouting"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Mail Routing</b></small><br>";
+							echo $element["Entity"]["LegalAddress"]["MailRouting"]["$"];
+						echo '</li>';
+					}
 					echo '<li class="list-group-item">';
 						echo "<small><b>First Address Line</b></small><br>";
 						echo $element["Entity"]["LegalAddress"]["FirstAddressLine"]["$"];
@@ -151,13 +158,6 @@ $json_content=json_decode($content, true);
 						echo '<li class="list-group-item">';
 							echo "<small><b>Additional Address Line</b></small><br>";
 							echo $element["Entity"]["LegalAddress"]["AdditionalAddressLine"]["0"]["$"];
-						echo '</li>';
-					}
-					# Prüfung, ob MailRouting vorhanden ist
-					if( isset( $element["Entity"]["LegalAddress"]["MailRouting"]["$"] ) ){
-						echo '<li class="list-group-item">';
-							echo "<small><b>Mail Routing</b></small><br>";
-							echo $element["Entity"]["LegalAddress"]["MailRouting"]["$"];
 						echo '</li>';
 					}
 					echo '<li class="list-group-item">';
@@ -199,6 +199,13 @@ $json_content=json_decode($content, true);
 							echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
 						echo '</li>';
 					}
+					# Prüfung, ob MailRouting vorhanden ist
+					if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
+						echo '<li class="list-group-item">';
+							echo "<small><b>Mail Routing</b></small><br>";
+							echo $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
+						echo '</li>';
+					}
 					echo '<li class="list-group-item">';
 						echo "<small><b>First Address Line</b></small><br>";
 						echo $element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"];
@@ -208,13 +215,6 @@ $json_content=json_decode($content, true);
 						echo '<li class="list-group-item">';
 							echo "<small><b>Additional Address Line</b></small><br>";
 							echo $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"];
-						echo '</li>';
-					}
-					# Prüfung, ob MailRouting vorhanden ist
-					if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
-						echo '<li class="list-group-item">';
-							echo "<small><b>Mail Routing</b></small><br>";
-							echo $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
 						echo '</li>';
 					}
 					echo '<li class="list-group-item">';
@@ -255,6 +255,10 @@ $json_content=json_decode($content, true);
 					} else {
 						$Adresszeilen[1] = $element["Entity"]["LegalName"]["$"];
 					}
+					# Prüfung, ob MailRouting vorhanden ist
+					if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
+						$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
+					}
 					
 					# First Adress Line 
 					$Adresszeilen[] =  $element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"];
@@ -265,10 +269,6 @@ $json_content=json_decode($content, true);
 						$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"];
 					}
 					
-					# Prüfung, ob MailRouting vorhanden ist
-					if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
-						$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
-					}
 					
 					# PLZ und Ort
 					if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
