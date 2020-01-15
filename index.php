@@ -97,7 +97,12 @@ $json_content=json_decode($content, true);
 			    . $element["LEI"]["$"] 
 			    . ' ';
 				if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
-					echo '<button type="button" class="btn btn-success float-right" disabled>' . $element["Entity"]["EntityStatus"]["$"] . '</button>';
+					echo '<button type="button" 
+					       class="btn btn-success 
+					       float-right" 
+					       disabled>' 
+					       . $element["Entity"]["EntityStatus"]["$"] 
+					       . '</button>';
 				} else {
 					echo '<button type="button" class="btn btn-danger float-right" disabled>' . $element["Entity"]["EntityStatus"]["$"] . '</button>';
 				}  
