@@ -104,7 +104,11 @@ $json_content=json_decode($content, true);
 					       . $element["Entity"]["EntityStatus"]["$"] 
 					       . '</button>';
 				} else {
-					echo '<button type="button" class="btn btn-danger float-right" disabled>' . $element["Entity"]["EntityStatus"]["$"] . '</button>';
+					echo '<button type="button" 
+					              class="btn btn-danger float-right" 
+					              disabled>' 
+					     . $element["Entity"]["EntityStatus"]["$"] 
+					     . '</button>';
 				}  
 			echo '</p>'; 
 		} 
