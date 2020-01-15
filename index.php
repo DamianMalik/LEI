@@ -82,48 +82,44 @@ $json_content=json_decode($content, true);
 		<!--Navbar-->	
 		<nav class="navbar navbar-expand-md bg-dark navbar-dark">
 			<form class="form-inline col-11">
-				<input class="form-control mr-sm-2 font-Bitter" 
-				       type="text" 
-				       name="LEI" 
-				       placeholder="LEI Nummer">
-				<button class="btn btn-outline-light font-Bitter" 
-				        type="submit">Suche</button>
+				<input class="form-control mr-sm-2 font-Bitter" type="text" name="LEI" placeholder="LEI Nummer">
+				<button class="btn btn-outline-light font-Bitter" type="submit">Suche</button>
 			</form>
 		</nav> 
 	
 		<!-- h1 with padding-top 3 -->
 		<?php
 			echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
-			    . $element["LEI"]["$"] 
-			    . ' ';
-				if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
-					echo '<button type="button" 
-					       class="btn btn-success 
-					       float-right" 
-					       disabled>' 
-					       . $element["Entity"]["EntityStatus"]["$"] 
-					       . '</button>';
-				} else {
-					echo '<button type="button" 
-					              class="btn btn-danger float-right" 
-					              disabled>' 
-					     . $element["Entity"]["EntityStatus"]["$"] 
-					     . '</button>';
+			    . $element["LEI"]["$"]
+			    . '</p>'; 
+			
+			if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
+				echo '<a href="#" 
+		         class="btn btn-success float-right btn-sm align-left font-Bitter disabled" 
+		         tabindex="-1" 
+		         role="button" 
+		         aria-disabled="true">'
+		         . $element["Entity"]["EntityStatus"]["$"]
+		         . '</a>';
+			} else {
+				echo '<a href="#" 
+		         class="btn btn-danger float-right btn-sm align-left font-Bitter disabled" 
+		         tabindex="-1" 
+		         role="button" 
+		         aria-disabled="true">'
+		         . $element["Entity"]["EntityStatus"]["$"]
+		         . '</a>';
 				}  
-			echo '</p>'; 
 		} 
 		
 		?>
 		
 		<?php
 		# Abruf URL als Link anzeigen
-		echo '<a href="' 
-		        . $Abruf_URL 
-		        . '" target="_blank" 
-		             class="btn btn-link font-Bitter pl-0 pb-3" 
-		             role="button">' 
-		        . $Abruf_URL 
-		        . '</a><br>';
+		echo '<a href="' . $Abruf_URL . '" target="_blank" class="btn btn-link font-Bitter pl-0 pb-3" role="button">' . $Abruf_URL . '</a><br>';
+				
+		
+		
 		?>
 		
 		<button type="button" class="btn btn-outline-dark btn-sm font-Bitter" data-toggle="collapse" data-target="#demo">zeige JSON...</button>
