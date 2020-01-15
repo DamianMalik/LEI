@@ -117,8 +117,13 @@ $json_content=json_decode($content, true);
 		
 		<?php
 		# Abruf URL als Link anzeigen
-		echo '<a href="' . $Abruf_URL . '" target="_blank" class="btn btn-link font-Bitter pl-0 pb-3" role="button">' . $Abruf_URL . '</a><br>';
-		
+		echo '<a href="' 
+		        . $Abruf_URL 
+		        . '" target="_blank" 
+		             class="btn btn-link font-Bitter pl-0 pb-3" 
+		             role="button">' 
+		        . $Abruf_URL 
+		        . '</a><br>';
 		?>
 		
 		<button type="button" class="btn btn-outline-dark btn-sm font-Bitter" data-toggle="collapse" data-target="#demo">zeige JSON...</button>
