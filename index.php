@@ -82,8 +82,12 @@ $json_content=json_decode($content, true);
 		<!--Navbar-->	
 		<nav class="navbar navbar-expand-md bg-dark navbar-dark">
 			<form class="form-inline col-11">
-				<input class="form-control mr-sm-2 font-Bitter" type="text" name="LEI" placeholder="LEI Nummer">
-				<button class="btn btn-outline-light font-Bitter" type="submit">Suche</button>
+				<input class="form-control mr-sm-2 font-Bitter" 
+				       type="text" 
+				       name="LEI" 
+				       placeholder="LEI Nummer">
+				<button class="btn btn-outline-light font-Bitter" 
+				        type="submit">Suche</button>
 			</form>
 		</nav> 
 	
