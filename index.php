@@ -334,8 +334,25 @@ $json_content=json_decode($content, true);
 			</div>
 		</div>
 		<br>
+		
+		<?php
+		# **********************************************************
+		# ***             CSV-Output vorbereiten                 ***
+		# ********************************************************** 
+		
+		# Definition der Überschriften 
+		$Ueberschriften = array("Adresszeile 1", "Adresszeile 2" ,"Adresszeile 3", "Adresszeile 4", "Adresszeile 5", "Adresszeile 6");
+		
+		# CSV Datei wird auf dem Server gespeichert
+		$CSV_Datei = fopen('adressen.csv', 'w');
+		fputcsv($CSV_Datei, $Ueberschriften, ";");
+		fputcsv($CSV_Datei, $Adresszeilen, ";");
+		fclose($CSV_Datei);
+		
+		
+		?>
 		<!-- Button -->
-		<a class="btn btn-dark font-Bitter disabled" href="#" role="button">CSV Export</a>
+		<a class="btn btn-dark font-Bitter" href="/adressen.csv" role="button">CSV Export</a>
 	
 		<!-- Button -->
 		<a class="btn btn-dark font-Bitter disabled" href="#" role="button">Serienbrief Export</a>
