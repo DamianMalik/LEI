@@ -254,6 +254,7 @@ $json_content=json_decode($content, true);
 			
 			// Variable als Array deklarieren
 			$Adresszeilen = array();
+			$Max_Zeilenlaenge = 49;
 
 			foreach ($json_content as $element) {
 				# Nur Aktive Entity wird ausgegeben. 
@@ -261,36 +262,58 @@ $json_content=json_decode($content, true);
 				if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
 					
 					# Entity Name
-					# Prüfung, ob OtherEntityName vorhanden ist
+					# Prüfung, ob OtherEntityName vorhanden ist, jedoch nicht als `Previous_Legal_Name` 
+					# Darüber hinaus Prüfung auf Länge des Namens. Falls der Entity Name zu lang ist, wird der Name auf mehrere Zeilen umbrochen.
 					if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) && 
 					$element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["@type"] != "PREVIOUS_LEGAL_NAME"
 					){
-						$Adresszeilen[1] = $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
+						$Umbruchzeile = wordwrap($element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"], $Max_Zeilenlaenge, "\n");
+						$Subarray = explode("\n", $Umbruchzeile);
+						foreach($Subarray AS $Umbruchzeile) {
+							$Adresszeilen[] = $Umbruchzeile;
+						}
 					} else {
-						$Adresszeilen[1] = $element["Entity"]["LegalName"]["$"];
+						$Umbruchzeile = wordwrap($element["Entity"]["LegalName"]["$"], $Max_Zeilenlaenge, "\n");
+						$Subarray = explode("\n", $Umbruchzeile);
+						foreach($Subarray AS $Umbruchzeile) {
+							$Adresszeilen[] = $Umbruchzeile;
+						}
 					}
 					# Prüfung, ob MailRouting vorhanden ist
 					if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
-						$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
+						$Umbruchzeile = wordwrap($element["Entity"]["LegalName"]["$"], $Max_Zeilenlaenge, "\n");
+						$Subarray = explode("\n", $Umbruchzeile);
+						foreach($Subarray AS $Umbruchzeile) {
+							$Adresszeilen[] = $Umbruchzeile;
+						}
 					}
 					
 					# First Adress Line 
-					$Adresszeilen[] =  $element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"];
+					$Umbruchzeile = wordwrap($element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"], $Max_Zeilenlaenge, "\n");
+						$Subarray = explode("\n", $Umbruchzeile);
+						foreach($Subarray AS $Umbruchzeile) {
+							$Adresszeilen[] = $Umbruchzeile;
+						}
 					
 					# Zusatz-Adressangabe
 					# Prüfung, ob AdditionalAddressLine vorhanden ist
 					if( isset( $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"] ) ){
-						$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"];
+						$Umbruchzeile = wordwrap($element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"], $Max_Zeilenlaenge, "\n");
+						$Subarray = explode("\n", $Umbruchzeile);
+						foreach($Subarray AS $Umbruchzeile) {
+							$Adresszeilen[] = $Umbruchzeile;
+						}
 					}
 					
 					
 					# PLZ und Ort
-					if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
+					# if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
+					if ( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] <> ".") {
 							$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] 
 							                . " " 
 											. strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
 						} else {
-							echo strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
+							$Adresszeilen[] = strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
 						}
 				}
 			} 
@@ -302,7 +325,7 @@ $json_content=json_decode($content, true);
 					# Alle Array Werte ausgeben
 					foreach ($Adresszeilen as $zeile => $inhalt) {
 						echo '<li class="list-group-item">';
-							echo "<small><b>Adresszeile " . $zeile . "</b></small><br>";
+							echo "<small><b>Adresszeile " . ( $zeile + 1 ) . "</b></small><br>";
 							echo $inhalt . "<br>";
 						echo '</li>';
 					}
