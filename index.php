@@ -53,10 +53,10 @@ if(isset($_GET['LEI'])) {
 $Basis_URL = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
 $Abruf_URL = $Basis_URL . $LEI;
 
+
 # **********************************************************
 # ***        LEI-Daten  herunterladen                    ***
 # ********************************************************** 
-
 
 $datei = $Abruf_URL;
 if (function_exists('curl_version')) {
