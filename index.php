@@ -50,8 +50,8 @@ if(isset($_GET['LEI'])) {
 	$LEI = "0000AAAAAAAAAAAAAA00"; // falls LEI nicht gesetzt wurde
 } // Ende der If-Abfrage
 
-$Basis_URL = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
-$URL_LEI = $Basis_URL . $LEI;
+$Basis_URL_LEI = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
+$URL_LEI = $Basis_URL_LEI . $LEI;
 
 
 # **********************************************************
@@ -75,7 +75,7 @@ if (function_exists('curl_version')) {
 	# echo "Bitte aktivieren/installieren ";
 	# echo "allow_url_fopen oder Curl!";
 }
-$json_content=json_decode($content, true);
+$json_content_LEI=json_decode($content, true);
 
 ?>
 
@@ -96,7 +96,7 @@ $json_content=json_decode($content, true);
 		</form>
 	</nav> 
 	<?php
-	foreach ($json_content as $element) {
+	foreach ($json_content_LEI as $element) {
 		# h1 with padding-top 3 
 		echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
 		    . $element["LEI"]["$"]
@@ -151,7 +151,7 @@ $json_content=json_decode($content, true);
 			<div class="card-header text-white bg-dark">Legal Address</div>
 			<ul class="list-group list-group-flush bg-light">
 			<?php
-			foreach ($json_content as $element) {
+			foreach ($json_content_LEI as $element) {
 					echo '<li class="list-group-item">';
 						echo "<small><b>Legal Name</b></small><br>";
 						echo $element["Entity"]["LegalName"]["$"];
@@ -208,7 +208,7 @@ $json_content=json_decode($content, true);
 			<div class="card-header text-white bg-dark">Headquarters Address</div>
 			<ul class="list-group list-group-flush bg-light">
 			<?php
-			foreach ($json_content as $element) {
+			foreach ($json_content_LEI as $element) {
 					echo '<li class="list-group-item">';
 						echo "<small><b>Legal Name</b></small><br>";
 						echo $element["Entity"]["LegalName"]["$"];
@@ -265,9 +265,34 @@ $json_content=json_decode($content, true);
 		$Adresszeilen = array();
 		$Max_Zeilenlaenge = 49;
 		
+		# **********************************************************
+		# ***        Ländernamen herunterladen                   ***
+		# **********************************************************
+		$Basis_URL_Land = "https://restcountries.eu/rest/v2/alpha/"; 
+		$URL_Land = $Basis_URL_Land
+					. strtolower($element["Entity"]["HeadquartersAddress"]["Country"]["$"]);
+		$datei = $URL_Land;
+		if (function_exists('curl_version')) {
+			$curl = curl_init();
+			curl_setopt($curl, CURLOPT_URL, $datei);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+			$content = curl_exec($curl);
+			curl_close($curl);
+			# echo "LEI mit CURL abgerufen." . "<br>"; 
+		} else if (file_get_contents(__FILE__) && ini_get('allow_url_fopen')) {
+			$content = file_get_contents($datei);
+			# echo "LEI mit FOPEN abgerufen." . "<br>"; 
+		} else {
+			# echo "Sie haben weder cURL installiert, ";
+			# echo "noch allow_url_fopen aktiviert. ";
+			# echo "Bitte aktivieren/installieren ";
+			# echo "allow_url_fopen oder Curl!";
+		}
+		$json_content_Land=json_decode($content, true);
 		
 		
-		foreach ($json_content as $element) {
+		
+		foreach ($json_content_LEI as $element) {
 			# Nur Aktive Entity wird ausgegeben. 
 			# Inactive Entity wird nicht ausgegeben. 
 			if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
@@ -322,8 +347,12 @@ $json_content=json_decode($content, true);
 				} else {
 					$Adresszeilen[] = strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
 				}
+				
+				# Land 
+				$Adresszeilen[] = strtoupper($json_content_Land['translations']['de']);
 			}
-		} 
+		}
+		
 		?>
 		<div class="card" style="width: 18rem;">
 			<div class="card-header text-white bg-info">Export Adresse <small>(Zeilen 1-6)</small></div>
@@ -348,7 +377,10 @@ $json_content=json_decode($content, true);
 	# ********************************************************** 
 	
 	# Definition der Überschriften 
-	$Ueberschriften = array("Adresszeile 1", "Adresszeile 2" ,"Adresszeile 3", "Adresszeile 4", "Adresszeile 5", "Adresszeile 6");
+	$Ueberschriften = array("Adresszeile 1", "Adresszeile 2",
+	                        "Adresszeile 3", "Adresszeile 4", 
+	                        "Adresszeile 5", "Adresszeile 6",
+	                        "Adresszeile 7", "Adresszeile 8");
 	
 	# CSV Datei wird auf dem Server gespeichert
 	$CSV_Datei = fopen('adressen.csv', 'w');
