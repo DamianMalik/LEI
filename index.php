@@ -39,7 +39,7 @@
 if(isset($_GET['LEI'])) {
 	$LEI = preg_replace('![^0-9A-Z]!', '', strip_tags(htmlentities($_GET['LEI']))) ;
 } else {
-	$LEI = "353800ZR4YBXWTFO6014"; 
+	$LEI = "0000AAAAAAAAAAAAAA00"; 
 } // Ende der If-Abfrage
 
 
@@ -74,10 +74,7 @@ $json_content=json_decode($content, true);
 
 	
 	<!--Container-->	
-	<div class="container">
-		<?php 
-		foreach ($json_content as $element) {
-		?>
+	<div class="container overflow-hidden">
 		
 		<!--Navbar-->	
 		<nav class="navbar navbar-expand-md bg-dark navbar-dark">
@@ -87,11 +84,17 @@ $json_content=json_decode($content, true);
 			</form>
 		</nav> 
 	
-		<!-- h1 with padding-top 3 -->
+		
 		<?php
-			echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
+		
+		echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
 			    . $element["LEI"]["$"]
 			    . '</p>'; 
+			    
+		foreach ($json_content as $element) {
+			
+			# h1 with padding-top 3 
+			
 			
 			if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
 				echo '<a href="#" 
