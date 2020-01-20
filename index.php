@@ -51,14 +51,14 @@ if(isset($_GET['LEI'])) {
 } // Ende der If-Abfrage
 
 $Basis_URL = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
-$Abruf_URL = $Basis_URL . $LEI;
+$URL_LEI = $Basis_URL . $LEI;
 
 
 # **********************************************************
 # ***        LEI-Daten  herunterladen                    ***
 # ********************************************************** 
 
-$datei = $Abruf_URL;
+$datei = $URL_LEI;
 if (function_exists('curl_version')) {
 	$curl = curl_init();
 	curl_setopt($curl, CURLOPT_URL, $datei);
@@ -123,9 +123,9 @@ $json_content=json_decode($content, true);
 	
 	# Abruf URL als Link anzeigen
 	echo '<a href="' 
-			. $Abruf_URL 
+			. $URL_LEI 
 			. '" target="_blank" class="btn btn-link font-Bitter pl-0 pb-3" role="button">' 
-			. $Abruf_URL 
+			. $URL_LEI 
 			. '</a><br>';
 	?>
 	
@@ -264,6 +264,9 @@ $json_content=json_decode($content, true);
 		// Variable als Array deklarieren
 		$Adresszeilen = array();
 		$Max_Zeilenlaenge = 49;
+		
+		
+		
 		foreach ($json_content as $element) {
 			# Nur Aktive Entity wird ausgegeben. 
 			# Inactive Entity wird nicht ausgegeben. 
