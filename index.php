@@ -96,30 +96,27 @@ $json_content_LEI=json_decode($content, true);
 		</form>
 	</nav> 
 	<?php
-	foreach ($json_content_LEI as $element) {
-		# h1 with padding-top 3 
-		echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
-		    . $element["LEI"]["$"]
-		    . '</p>'; 
-		
-		if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
-			echo '<a href="#" 
-	         class="btn btn-success float-right btn-sm align-left font-Bitter disabled" 
-	         tabindex="-1" 
-	         role="button" 
-	         aria-disabled="true">'
-	         . $element["Entity"]["EntityStatus"]["$"]
-	         . '</a>';
-		} else {
-			echo '<a href="#" 
+	# h1 with padding-top 3 
+	echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
+			. $json_content_LEI['0']['LEI']['$']
+			. '</p>'; 
+	if ($json_content_LEI['0']['Entity']['EntityStatus']['$'] == "ACTIVE") {
+		echo '<a href="#" 
+				class="btn btn-success float-right btn-sm align-left font-Bitter disabled" 
+				tabindex="-1" 
+				role="button" 
+				aria-disabled="true">'
+				. $json_content_LEI['0']['Entity']['EntityStatus']['$']
+				. '</a>';
+	} else {
+		echo '<a href="#" 
 			class="btn btn-danger float-right btn-sm align-left font-Bitter disabled" 
 			tabindex="-1" 
 			role="button" 
 			aria-disabled="true">'
-			. $element["Entity"]["EntityStatus"]["$"]
+			. $json_content_LEI['0']['Entity']['EntityStatus']['$']
 			. '</a>';
-		}  
-	} 
+	}  
 	
 	# Abruf URL als Link anzeigen
 	echo '<a href="' 
@@ -151,54 +148,52 @@ $json_content_LEI=json_decode($content, true);
 			<div class="card-header text-white bg-dark">Legal Address</div>
 			<ul class="list-group list-group-flush bg-light">
 			<?php
-			foreach ($json_content_LEI as $element) {
-					echo '<li class="list-group-item">';
-						echo "<small><b>Legal Name</b></small><br>";
-						echo $element["Entity"]["LegalName"]["$"];
-					echo '</li>';
-				# Prüfung, ob OtherEntityName vorhanden ist
-				if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) ){
-					echo '<li class="list-group-item">';
-						echo "<small><b>Other Entity Name"
-							. " ("
-							. $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["@type"]
-							. ")"
-							. "</b></small><br>";
-						echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
-					echo '</li>';
-				}
-				# Prüfung, ob MailRouting vorhanden ist
-				if( isset( $element["Entity"]["LegalAddress"]["MailRouting"]["$"] ) ){
-					echo '<li class="list-group-item">';
-						echo "<small><b>Mail Routing</b></small><br>";
-						echo $element["Entity"]["LegalAddress"]["MailRouting"]["$"];
-					echo '</li>';
-				}
-					echo '<li class="list-group-item">';
-						echo "<small><b>First Address Line</b></small><br>";
-						echo $element["Entity"]["LegalAddress"]["FirstAddressLine"]["$"];
-					echo '</li>';
-				# Prüfung, ob AdditionalAddressLine vorhanden ist
-				if( isset( $element["Entity"]["LegalAddress"]["AdditionalAddressLine"]["0"]["$"] ) ){
-					echo '<li class="list-group-item">';
-						echo "<small><b>Additional Address Line</b></small><br>";
-						echo $element["Entity"]["LegalAddress"]["AdditionalAddressLine"]["0"]["$"];
-					echo '</li>';
-				}
-					echo '<li class="list-group-item">';
-						echo "<small><b>City</b></small><br>";
-						if( isset( $element["Entity"]["LegalAddress"]["PostalCode"]["$"] ) ){
-							echo $element["Entity"]["LegalAddress"]["PostalCode"]["$"];
-							echo " ";
-						}
-						echo $element["Entity"]["LegalAddress"]["City"]["$"];
-					
-					echo '</li>';
-					echo '<li class="list-group-item">';
-						echo "<small><b>Country</b></small><br>";
-						echo $element["Entity"]["LegalAddress"]["Country"]["$"];
-					echo '</li>';
+				echo '<li class="list-group-item">';
+					echo "<small><b>Legal Name</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['LegalName']['$'];
+				echo '</li>';
+			# Prüfung, ob OtherEntityName vorhanden ist
+			if( isset( $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$']) ){
+				echo '<li class="list-group-item">';
+					echo "<small><b>Other Entity Name"
+						. " ("
+						. $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['@type']
+						. ")"
+						. "</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'];
+				echo '</li>';
 			}
+			# Prüfung, ob MailRouting vorhanden ist
+			if( isset( $json_content_LEI['0']['Entity']['LegalAddress']['MailRouting']['$']) ){
+				echo '<li class="list-group-item">';
+					echo "<small><b>Mail Routing</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['LegalAddress']['MailRouting']['$'];
+				echo '</li>';
+			}
+				echo '<li class="list-group-item">';
+					echo "<small><b>First Address Line</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['LegalAddress']['FirstAddressLine']['$'];
+				echo '</li>';
+			# Prüfung, ob AdditionalAddressLine vorhanden ist
+			if( isset( $json_content_LEI['0']['Entity']['LegalAddress']['AdditionalAddressLine']['0']['$']) ){
+				echo '<li class="list-group-item">';
+					echo "<small><b>Additional Address Line</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['LegalAddress']['AdditionalAddressLine']['0']['$'];
+				echo '</li>';
+			}
+				echo '<li class="list-group-item">';
+					echo "<small><b>City</b></small><br>";
+					if( isset( $json_content_LEI['0']['Entity']['LegalAddress']['PostalCode']['$'] ) ){
+						echo $json_content_LEI['0']['Entity']['LegalAddress']['PostalCode']['$'];
+						echo " ";
+					}
+					echo $json_content_LEI['0']['Entity']['LegalAddress']['City']['$'];
+				
+				echo '</li>';
+				echo '<li class="list-group-item">';
+					echo "<small><b>Country</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['LegalAddress']['Country']['$'];
+				echo '</li>';
 			?>
 			</ul>
 		</div>
@@ -208,53 +203,53 @@ $json_content_LEI=json_decode($content, true);
 			<div class="card-header text-white bg-dark">Headquarters Address</div>
 			<ul class="list-group list-group-flush bg-light">
 			<?php
-			foreach ($json_content_LEI as $element) {
-					echo '<li class="list-group-item">';
-						echo "<small><b>Legal Name</b></small><br>";
-						echo $element["Entity"]["LegalName"]["$"];
-					echo '</li>';
-				# Prüfung, ob OtherEntityName vorhanden ist
-				if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) ){
-					echo '<li class="list-group-item">';
-						echo "<small><b>Other Entity Name"
-						. " ("
-						. $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["@type"]
-						. ")"
-						. "</b></small><br>";
-						echo $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"];
-					echo '</li>';
-				}
-				# Prüfung, ob MailRouting vorhanden ist
-				if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
-					echo '<li class="list-group-item">';
-						echo "<small><b>Mail Routing</b></small><br>";
-						echo $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"];
-					echo '</li>';
-				}
 				echo '<li class="list-group-item">';
-					echo "<small><b>First Address Line</b></small><br>";
-					echo $element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"];
+					echo "<small><b>Legal Name</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['LegalName']['$'];
 				echo '</li>';
-				# Prüfung, ob AdditionalAddressLine vorhanden ist
-				if( isset( $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"] ) ){
-					echo '<li class="list-group-item">';
-						echo "<small><b>Additional Address Line</b></small><br>";
-						echo $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"];
-					echo '</li>';
-				}
+			# Prüfung, ob OtherEntityName vorhanden ist
+			if( isset( $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$']) ){
 				echo '<li class="list-group-item">';
-					echo "<small><b>City</b></small><br>";
-					if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
-						echo $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"];
-						echo " ";
-					}
-					echo $element["Entity"]["HeadquartersAddress"]["City"]["$"];
-				echo '</li>';
-				echo '<li class="list-group-item">';
-					echo "<small><b>Country</b></small><br>";
-					echo $element["Entity"]["HeadquartersAddress"]["Country"]["$"];
+					echo "<small><b>Other Entity Name"
+					. " ("
+					. $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['@type']
+					. ")"
+					. "</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'];
 				echo '</li>';
 			}
+			# Prüfung, ob MailRouting vorhanden ist
+			if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['MailRouting']['$']) ){
+				echo '<li class="list-group-item">';
+					echo "<small><b>Mail Routing</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['MailRouting']['$']; 
+				echo '</li>';
+			}
+			echo '<li class="list-group-item">';
+				echo "<small><b>First Address Line</b></small><br>";
+				echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['FirstAddressLine']['$'];
+			echo '</li>';
+			# Prüfung, ob AdditionalAddressLine vorhanden ist
+			if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['AdditionalAddressLine']['0']['$']) ){
+				echo '<li class="list-group-item">';
+					echo "<small><b>Additional Address Line</b></small><br>";
+					echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['AdditionalAddressLine']['0']['$'];
+				echo '</li>';
+			}
+			echo '<li class="list-group-item">';
+				echo "<small><b>City</b></small><br>";
+				if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$']) ){
+					echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'];
+					echo " ";
+				}
+				echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$'];
+			echo '</li>';
+			echo '<li class="list-group-item">';
+				echo "<small><b>Country</b></small><br>";
+				echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['Country']['$'];
+			echo '</li>';
+			
+			
 			?>
 			</ul>
 		</div>
@@ -270,7 +265,7 @@ $json_content_LEI=json_decode($content, true);
 		# **********************************************************
 		$Basis_URL_Land = "https://restcountries.eu/rest/v2/alpha/"; 
 		$URL_Land = $Basis_URL_Land
-					. strtolower($element["Entity"]["HeadquartersAddress"]["Country"]["$"]);
+					. strtolower($json_content_LEI['0']['Entity']['HeadquartersAddress']['Country']['$']);
 		$datei = $URL_Land;
 		if (function_exists('curl_version')) {
 			$curl = curl_init();
@@ -290,69 +285,63 @@ $json_content_LEI=json_decode($content, true);
 		}
 		$json_content_Land=json_decode($content, true);
 		
-		
-		
-		foreach ($json_content_LEI as $element) {
-			# Nur Aktive Entity wird ausgegeben. 
-			# Inactive Entity wird nicht ausgegeben. 
-			if ($element["Entity"]["EntityStatus"]["$"] == "ACTIVE") {
-				# Entity Name
-				# Prüfung, ob OtherEntityName vorhanden ist, jedoch nicht als `Previous_Legal_Name` 
-				# Darüber hinaus Prüfung auf Länge des Namens. Falls der Entity Name zu lang ist, wird der Name auf mehrere Zeilen umbrochen.
-				if( isset( $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"] ) 
-					&& $element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["@type"] 
-					!= "PREVIOUS_LEGAL_NAME") {
-						$Umbruchzeile = wordwrap($element["Entity"]["OtherEntityNames"]["OtherEntityName"]["0"]["$"], $Max_Zeilenlaenge, "\n");
-						$Subarray = explode("\n", $Umbruchzeile);
-						foreach($Subarray AS $Umbruchzeile) {
-							$Adresszeilen[] = $Umbruchzeile;
-						}
-				} else {
-					$Umbruchzeile = wordwrap($element["Entity"]["LegalName"]["$"], $Max_Zeilenlaenge, "\n");
+		# Nur Aktive Entity wird ausgegeben. 
+		# Inactive Entity wird nicht ausgegeben. 
+		if ($json_content_LEI['0']['Entity']['EntityStatus']['$'] == "ACTIVE") {
+			# Entity Name
+			# Prüfung, ob OtherEntityName vorhanden ist, jedoch nicht als `Previous_Legal_Name` 
+			# Darüber hinaus Prüfung auf Länge des Namens. Falls der Entity Name zu lang ist, wird der Name auf mehrere Zeilen umbrochen.
+			if( isset( $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'] ) 
+				&& $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['@type'] 
+				!= "PREVIOUS_LEGAL_NAME") {
+					$Umbruchzeile = wordwrap($json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'], $Max_Zeilenlaenge, "\n");
 					$Subarray = explode("\n", $Umbruchzeile);
 					foreach($Subarray AS $Umbruchzeile) {
 						$Adresszeilen[] = $Umbruchzeile;
 					}
-				}
-				# Prüfung, ob MailRouting vorhanden ist
-				if( isset( $element["Entity"]["HeadquartersAddress"]["MailRouting"]["$"] ) ){
-					$Umbruchzeile = wordwrap($element["Entity"]["LegalName"]["$"], $Max_Zeilenlaenge, "\n");
-					$Subarray = explode("\n", $Umbruchzeile);
-					foreach($Subarray AS $Umbruchzeile) {
-						$Adresszeilen[] = $Umbruchzeile;
-					}
-				}
-				# First Adress Line 
-				$Umbruchzeile = wordwrap($element["Entity"]["HeadquartersAddress"]["FirstAddressLine"]["$"], $Max_Zeilenlaenge, "\n");
+			} else {
+				$Umbruchzeile = wordwrap($json_content_LEI['0']['Entity']['LegalName']['$'], $Max_Zeilenlaenge, "\n");
 				$Subarray = explode("\n", $Umbruchzeile);
 				foreach($Subarray AS $Umbruchzeile) {
 					$Adresszeilen[] = $Umbruchzeile;
 				}
-				# Zusatz-Adressangabe
-				# Prüfung, ob AdditionalAddressLine vorhanden ist
-				if( isset( $element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"] ) ){
-					$Umbruchzeile = wordwrap($element["Entity"]["HeadquartersAddress"]["AdditionalAddressLine"]["0"]["$"], $Max_Zeilenlaenge, "\n");
-					$Subarray = explode("\n", $Umbruchzeile);
-					foreach($Subarray AS $Umbruchzeile) {
-						$Adresszeilen[] = $Umbruchzeile;
-					}
-				}
-				
-				# PLZ und Ort
-				# if( isset( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] ) ){
-				if ( $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] <> ".") {
-					$Adresszeilen[] = $element["Entity"]["HeadquartersAddress"]["PostalCode"]["$"] 
-						. " " 
-						. strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
-				} else {
-					$Adresszeilen[] = strtoupper($element["Entity"]["HeadquartersAddress"]["City"]["$"]);
-				}
-				
-				# Land 
-				$Adresszeilen[] = strtoupper($json_content_Land['translations']['de']);
 			}
+			# Prüfung, ob MailRouting vorhanden ist
+			if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['MailRouting']['$'] ) ){
+				$Umbruchzeile = wordwrap($json_content_LEI['0']['Entity']['HeadquartersAddress']['MailRouting']['$'], $Max_Zeilenlaenge, "\n");
+				$Subarray = explode("\n", $Umbruchzeile);
+				foreach($Subarray AS $Umbruchzeile) {
+					$Adresszeilen[] = $Umbruchzeile;
+				}
+			}
+			# First Adress Line 
+			$Umbruchzeile = wordwrap($json_content_LEI['0']['Entity']['HeadquartersAddress']['FirstAddressLine']['$'], $Max_Zeilenlaenge, "\n");
+			$Subarray = explode("\n", $Umbruchzeile);
+			foreach($Subarray AS $Umbruchzeile) {
+				$Adresszeilen[] = $Umbruchzeile;
+			}
+			# Zusatz-Adressangabe
+			# Prüfung, ob AdditionalAddressLine vorhanden ist
+			if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['AdditionalAddressLine']['0']['$'] ) ){
+				$Umbruchzeile = wordwrap($json_content_LEI['0']['Entity']['HeadquartersAddress']['AdditionalAddressLine']['0']['$'], $Max_Zeilenlaenge, "\n");
+				$Subarray = explode("\n", $Umbruchzeile);
+				foreach($Subarray AS $Umbruchzeile) {
+					$Adresszeilen[] = $Umbruchzeile;
+				}
+			}
+			
+			# PLZ und Ort
+			if ( $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'] <> ".") {
+				$Adresszeilen[] = $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$']
+					. " " 
+					. strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
+			} else {
+				$Adresszeilen[] = strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
+			}
+			
+			# Land 
+			$Adresszeilen[] = strtoupper($json_content_Land['translations']['de']);
 		}
-		
 		?>
 		<div class="card" style="width: 18rem;">
 			<div class="card-header text-white bg-info">Export Adresse <small>(Zeilen 1-6)</small></div>
