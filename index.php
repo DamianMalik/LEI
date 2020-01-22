@@ -371,18 +371,41 @@ $json_content_LEI=json_decode($content, true);
 	                        "Adresszeile 5", "Adresszeile 6",
 	                        "Adresszeile 7", "Adresszeile 8");
 	
-	# CSV Datei wird auf dem Server gespeichert
+	# CSV Datei wird auf dem Server speichern
 	$CSV_Datei = fopen('adressen.csv', 'w');
 	fputcsv($CSV_Datei, $Ueberschriften, ";");
 	fputcsv($CSV_Datei, $Adresszeilen, ";");
 	fclose($CSV_Datei);
+	
+	
+	# **********************************************************
+	# ***             RTF-Dokument verändern                 ***
+	# ********************************************************** 
+	
+	# RTF / PHP Datei öffnen
+	$RTF = file_get_contents('Serienbrief.rtf.php');
+	// PHP-Tags entfernen
+	$RTF = str_replace('<?php /*', '', $RTF);
+	$RTF = str_replace('?>', '', $RTF);
+	// Variablen ersetzen
+	$RTF = str_replace('%ADRESSZEILE_1%', $Adresszeilen[0], $RTF);
+	$RTF = str_replace('%ADRESSZEILE_2%', $Adresszeilen[1], $RTF);
+	$RTF = str_replace('%ADRESSZEILE_3%', $Adresszeilen[2], $RTF);
+	$RTF = str_replace('%ADRESSZEILE_4%', $Adresszeilen[3], $RTF);
+	$RTF = str_replace('%ADRESSZEILE_5%', $Adresszeilen[4], $RTF);
+	$RTF = str_replace('%ADRESSZEILE_6%', $Adresszeilen[5], $RTF);
+	$RTF = str_replace('%ADRESSZEILE_7%', $Adresszeilen[6], $RTF);
+	# $RTF = iconv("ISO-8859-1", "UTF-8", $RTF);
+	# RTF Datei auf dem Server speichern
+	file_put_contents("Brief_1.rtf", $RTF);
 	?>
 	
 	<!-- Button -->
 	<a class="btn btn-dark font-Bitter" href="/adressen.csv" role="button">CSV Export</a>
 	
 	<!-- Button -->
-	<a class="btn btn-dark font-Bitter disabled" href="#" role="button">Serienbrief Export</a>
+	<!-- <a class="btn btn-dark font-Bitter disabled" href="#" role="button">Serienbrief Export</a> -->
+	<a class="btn btn-outline-secondary font-Bitter" href="/Brief_1.rtf" role="button">Serienbrief Export</a>
 	
 	<!-- Abstand -->
 	<div class="border-top my-3"></div>
