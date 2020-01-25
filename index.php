@@ -47,7 +47,7 @@
 if(isset($_GET['LEI'])) {
 	$LEI = preg_replace('![^0-9A-Z]!', '', strip_tags(htmlentities($_GET['LEI']))) ;
 } else {
-	$LEI = "0000AAAAAAAAAAAAAA00"; // falls LEI nicht gesetzt wurde
+	$LEI = "INR2EJN1ERAN0W5ZP974"; // falls LEI nicht gesetzt wurde
 } // Ende der If-Abfrage
 
 $Basis_URL_LEI = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
@@ -373,7 +373,11 @@ $json_content_LEI=json_decode($content, true);
 	
 	# CSV Datei wird auf dem Server speichern
 	$CSV_Datei = fopen('adressen.csv', 'w');
+	# fügt BOM ein, um UTF-8 in Excel darzustellen
+	fprintf($CSV_Datei, chr(0xEF).chr(0xBB).chr(0xBF));
+	# Schreibe Überschrift
 	fputcsv($CSV_Datei, $Ueberschriften, ";");
+	# Screibe Adressdaten
 	fputcsv($CSV_Datei, $Adresszeilen, ";");
 	fclose($CSV_Datei);
 	
