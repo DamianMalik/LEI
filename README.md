@@ -8,6 +8,8 @@ Dieses Skript zeigt für einen beliebigen **Legal Entity Identifier (LEI)** die 
 
 Die aufbereiteten Adressfelder werden in eine CSV-Datei exportiert. Darüberhinaus wird die  Adresse in einen Serienbrief eingefügt (Beispiel RTF-Datei). Beide Dokumente können einfach über die Weboberfläche abgerufen werden. 
 
+![Beispiel Darstellung:](https://raw.githubusercontent.com/DamianMalik/LEI/master/LEI-Screenshot.png)
+
 # Installation, Anforderungen und Abhängigkeiten
 
 ## Abhängigkeiten
