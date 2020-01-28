@@ -10,7 +10,7 @@ Die aufbereiteten Adressfelder werden in eine CSV-Datei exportiert. Darüberhina
 
 # Installation, Anforderungen und Abhängigkeiten
 
-# Abhängigkeiten
+## Abhängigkeiten
 Das Skript nutzt die folgenden Services: 
 + Bootstrap 4 
 + Google Fonts 
