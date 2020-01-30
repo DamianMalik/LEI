@@ -50,6 +50,8 @@ if(isset($_GET['LEI'])) {
 	$LEI = "INR2EJN1ERAN0W5ZP974"; // falls LEI nicht gesetzt wurde
 } // Ende der If-Abfrage
 
+if (strlen($LEI) <> 20 ) $Fehlermeldung = "Dies ist keine gültige LEI Nummer";
+
 $Basis_URL_LEI = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
 $URL_LEI = $Basis_URL_LEI . $LEI;
 
@@ -75,12 +77,19 @@ if (function_exists('curl_version')) {
 	# echo "Bitte aktivieren/installieren ";
 	# echo "allow_url_fopen oder Curl!";
 }
+
+# Überprüfung, ob die GET-Abfrage leer ist.
+if ($content == "[]" ) $Fehlermeldung = "Dies ist keine gültige LEI Nummer";
+
+# String $content wird in JSON decodiert
 $json_content_LEI=json_decode($content, true);
 
+
+# **********************************************************
+# ***               HTML-Container                       ***
+# ********************************************************** 
+
 ?>
-
-
-<!--Container-->	
 <div class="container overflow-hidden">
 	
 	<!--Navbar-->	
@@ -96,6 +105,20 @@ $json_content_LEI=json_decode($content, true);
 		</form>
 	</nav> 
 	<?php
+	
+	# **********************************************************
+	# ***               HTML-Container                       ***
+	# ********************************************************** 
+	# Überprüfung, ob Fehlermeldung vorliegt. 
+	# Bei vorliegen eines Fehlers wird das Skript abgebrochen. 
+	if( isset( $Fehlermeldung )){
+		echo '<p class="h1 pt-3 pb-3 font-Bitter">' . $Fehlermeldung . '</p>'; 
+		echo "</div>";
+		echo "</body>";
+		echo "</html>";
+		exit;
+	}
+	
 	# h1 with padding-top 3 
 	echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
 			. $json_content_LEI['0']['LEI']['$']
@@ -140,10 +163,14 @@ $json_content_LEI=json_decode($content, true);
 	<!-- Abstand -->
 	<div class="border-top my-3"></div>
 	
-	<!-- Karten -->
+	<?php
+	# **********************************************************
+	# ***               Adresskarten anzeigen                ***
+	# ********************************************************** 
+	?>
 	<div class="card-deck font-Bitter">
 	
-		<!-- Karte 1 -->
+		<!-- Adresskarte 1 -->
 		<div class="card" style="width: 18rem;">
 			<div class="card-header text-white bg-dark">Legal Address</div>
 			<ul class="list-group list-group-flush bg-light">
@@ -254,7 +281,6 @@ $json_content_LEI=json_decode($content, true);
 			</ul>
 		</div>
 		
-		<!-- Karte 3 -->
 		<?php
 		// Variable als Array deklarieren
 		$Adresszeilen = array();
@@ -285,6 +311,10 @@ $json_content_LEI=json_decode($content, true);
 		}
 		$json_content_Land=json_decode($content, true);
 		
+		
+		# **********************************************************
+		# ***        Relevante Adresszeilen ermitteln            ***
+		# **********************************************************
 		# Nur Aktive Entity wird ausgegeben. 
 		# Inactive Entity wird nicht ausgegeben. 
 		if ($json_content_LEI['0']['Entity']['EntityStatus']['$'] == "ACTIVE") {
@@ -343,6 +373,7 @@ $json_content_LEI=json_decode($content, true);
 			$Adresszeilen[] = strtoupper($json_content_Land['translations']['de']);
 		}
 		?>
+		<!-- Karte 3 -->
 		<div class="card" style="width: 18rem;">
 			<div class="card-header text-white bg-info">Export Adresse <small>(Zeilen 1-6)</small></div>
 			<ul class="list-group list-group-flush bg-light">
