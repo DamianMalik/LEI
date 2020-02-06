@@ -1,6 +1,8 @@
 
 # LEI-Adresse für Adressetikett
 
+Identifiziert aus einer beliebigen LEI-Adresse die relevanten Datenfelder für ein Adressetikett. 
+
 Dieses Skript zeigt für einen beliebigen **Legal Entity Identifier (LEI)** die Adressangaben aus der `Legal Address` und der `Headquarters Address` übersichtlich nebeneinander an. Zudem werden aus der `Headquarters Address` die relevanten Adressangaben für ein Adressetikett ausgewählt und zum Vergleich dargestellt. Hierbei  werden die Adressfelder  wie folgt aufbereitet: 
 * Berücksichtigung von Überlängen in den Feldern `LegalName`, `MailRouting`, `FirstAddressLine` und `AdditionalAddressLine`: Adresselemente mit mehr als 49 Zeichen werden auf nächste Adresszeile umbrochen.  
 * Nichtberücksichtigung eines inaktiven `EntityStatus`: Inaktive LEI werden nicht weiterverarbeitet. 
