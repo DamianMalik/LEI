@@ -444,7 +444,10 @@ $json_content_LEI=json_decode($content, true);
 			}
 			
 			# Land 
-			$Adresszeilen[] = strtoupper($json_content_Land['translations']['de']);
+			# In der Export-Adresse soll das eigne Land nicht angedruckt werden. 
+			if ( strtoupper($json_content_Land['translations']['de']) != "DEUTSCHLAND" ) {
+				$Adresszeilen[] = strtoupper($json_content_Land['translations']['de']);
+			}
 		}
 		?>
 		<!-- Karte 3 -->
