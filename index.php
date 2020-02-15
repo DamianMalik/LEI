@@ -500,13 +500,15 @@ $json_content_LEI=json_decode($content, true);
 	$RTF = str_replace('<?php /*', '', $RTF);
 	$RTF = str_replace('?>', '', $RTF);
 	// Variablen ersetzen
-	$RTF = str_replace('%ADRESSZEILE_1%', $Adresszeilen[0], $RTF);
-	$RTF = str_replace('%ADRESSZEILE_2%', $Adresszeilen[1], $RTF);
-	$RTF = str_replace('%ADRESSZEILE_3%', $Adresszeilen[2], $RTF);
-	$RTF = str_replace('%ADRESSZEILE_4%', $Adresszeilen[3], $RTF);
-	$RTF = str_replace('%ADRESSZEILE_5%', $Adresszeilen[4], $RTF);
-	$RTF = str_replace('%ADRESSZEILE_6%', $Adresszeilen[5], $RTF);
-	$RTF = str_replace('%ADRESSZEILE_7%', $Adresszeilen[6], $RTF);
+	# Hierbei wird überprüft, ob der Arrayzeiger gesetzt ist. 
+	$RTF = isset($Adresszeilen[0]) ? str_replace('%ADRESSZEILE_1%', $Adresszeilen[0], $RTF) : '';
+	$RTF = isset($Adresszeilen[1]) ? str_replace('%ADRESSZEILE_2%', $Adresszeilen[1], $RTF) : '';
+	$RTF = isset($Adresszeilen[2]) ? str_replace('%ADRESSZEILE_3%', $Adresszeilen[2], $RTF) : '';
+	$RTF = isset($Adresszeilen[3]) ? str_replace('%ADRESSZEILE_4%', $Adresszeilen[3], $RTF) : '';
+	$RTF = isset($Adresszeilen[4]) ? str_replace('%ADRESSZEILE_5%', $Adresszeilen[4], $RTF) : '';
+	$RTF = isset($Adresszeilen[5]) ? str_replace('%ADRESSZEILE_6%', $Adresszeilen[5], $RTF) : '';
+	$RTF = isset($Adresszeilen[6]) ? str_replace('%ADRESSZEILE_7%', $Adresszeilen[6], $RTF) : '';
+	
 	# $RTF = iconv("ISO-8859-1", "UTF-8", $RTF);
 	# RTF Datei auf dem Server speichern
 	file_put_contents("Brief_1.rtf", $RTF);
