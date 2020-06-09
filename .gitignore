@@ -1,0 +1,3 @@
+# Ignoriere folgende Dateien:
+error.log
+/Archiv/*
