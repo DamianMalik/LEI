@@ -500,8 +500,9 @@ $json_content_LEI=json_decode($content, true);
 	# ********************************************************** 
 	
 	# RTF / PHP Datei öffnen
-	$RTF = file_get_contents('Serienbrief.rtf.php');
+	# $RTF = file_get_contents('Serienbrief.rtf.php');
 	// PHP-Tags entfernen
+	/*
 	$RTF = str_replace('<?php /*', '', $RTF);
 	$RTF = str_replace('?>', '', $RTF);
 	// Variablen ersetzen
@@ -517,6 +518,7 @@ $json_content_LEI=json_decode($content, true);
 	# $RTF = iconv("ISO-8859-1", "UTF-8", $RTF);
 	# RTF Datei auf dem Server speichern
 	file_put_contents("Brief_1.rtf", $RTF);
+	*/
 	?>
 	
 	<!-- Button -->
