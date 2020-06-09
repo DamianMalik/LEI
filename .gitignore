@@ -1,3 +1,4 @@
 # Ignoriere folgende Dateien:
 error.log
+adressen.csv
 /Archiv/*
