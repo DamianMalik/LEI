@@ -1,36 +1,28 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+	
 	<!-- Required meta tags -->
-	<title>LEI Abruf</title>
 	<meta charset="utf-8">
 	<meta name="viewport" 
-	      content="width=device-width, initial-scale=1">  
+		content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" 
-	      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
-	      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
-	      crossorigin="anonymous">
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+			integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+			crossorigin="anonymous">
+	
+	
+	<title>LEI Abruf</title>
 	
 	<!-- Zusätzliches CSS -->
 	<link rel="stylesheet" 
 	      href="style.css">
 	
-	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" 
-            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" 
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" 
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" 
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" 
-            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" 
-            crossorigin="anonymous"></script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Bitter" rel="stylesheet"> 
-    
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Bitter" rel="stylesheet"> 
+
 </head>
 <body class="bg-white">
 <?php
@@ -435,6 +427,17 @@ $json_content_LEI=json_decode($content, true);
 			}
 			
 			# PLZ und Ort
+			if( isset ($json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'] )){
+				if ( $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'] <> ".") {
+				$Adresszeilen[] = $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$']
+					. " " 
+					. strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
+				}
+			} else {
+				$Adresszeilen[] = strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
+			}
+			
+			/*
 			if ( $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'] <> ".") {
 				$Adresszeilen[] = $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$']
 					. " " 
@@ -442,6 +445,8 @@ $json_content_LEI=json_decode($content, true);
 			} else {
 				$Adresszeilen[] = strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
 			}
+			*/
+			
 			
 			# Land 
 			# In der Export-Adresse soll das eigne Land nicht angedruckt werden. 
@@ -518,8 +523,7 @@ $json_content_LEI=json_decode($content, true);
 	<a class="btn btn-dark font-Bitter" href="/adressen.csv" role="button">CSV Export</a>
 	
 	<!-- Button -->
-	<!-- <a class="btn btn-dark font-Bitter disabled" href="#" role="button">Serienbrief Export</a> -->
-	<a class="btn btn-outline-secondary font-Bitter" href="/Brief_1.rtf" role="button">Serienbrief Export</a>
+	<a class="btn btn-outline-secondary font-Bitter disabled" href="#" role="button">Serienbrief Export</a>
 	
 	<!-- Abstand -->
 	<div class="border-top my-3"></div>
@@ -537,5 +541,16 @@ $json_content_LEI=json_decode($content, true);
 		</a>
 	</nav>
 </div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" 
+		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" 
+		crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" 
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" 
+		crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" 
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" 
+		crossorigin="anonymous"></script>
 </body>
 </html>
