@@ -90,7 +90,7 @@ $json_content_LEI=json_decode($content, true);
 			<input 	class="form-control mr-sm-2 font-Bitter" 
 					type="text" 
 					name="LEI" 
-					placeholder="LEI Nummer">
+					placeholder="LEI Nummer...">
 			<button class="btn btn-outline-light font-Bitter" 
 					type="submit">Suche
 					</button>
