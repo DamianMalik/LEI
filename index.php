@@ -141,10 +141,31 @@ $json_content_LEI=json_decode($content, true);
 			. '</a><br>';
 	?>
 	
+	
+	<?php
+	# **********************************************************
+	# ***        Update-Informationen und zeige JSON         ***
+	# ********************************************************** 
+	
+	# Update-Informationen aus JSON ermitteln 
+	$Registration_Initial = $json_content_LEI['0']['Registration']['InitialRegistrationDate']['$'];
+	$Registration_LastUpdate = $json_content_LEI['0']['Registration']['LastUpdateDate']['$']; 
+	?>
+	
+	<?php
+	# JSON-Button anzeigen
+	?>
 	<button type="button" 
 			class="btn btn-outline-dark btn-sm font-Bitter" 
 			data-toggle="collapse" 
 			data-target="#demo">zeige JSON...</button>
+	<?php
+	# Update-Informationen im Button-Format anzeigen
+	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-2" disabled><b>Registration:</b> <small>' . date("d.m.Y", strtotime($Registration_Initial)) . '</small></button>';
+	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-2" disabled><b>Letztes Update:</b> <small>' . date("d.m.Y", strtotime($Registration_LastUpdate)) . '</small></button>';
+	?>
+	
+	
 	<div id="demo" class="pt-3 small collapse font-Bitter">
 		<?php
 		# Inhalt des JSON ausgeben
@@ -457,7 +478,7 @@ $json_content_LEI=json_decode($content, true);
 		?>
 		<!-- Karte 3 -->
 		<div class="card" style="width: 18rem;">
-			<div class="card-header text-white bg-info">Export Adresse <small>(Zeilen 1-6)</small></div>
+			<div class="card-header text-white bg-info">Export Adresse</div>
 			<ul class="list-group list-group-flush bg-light">
 				<?php
 				# Alle Array Werte ausgeben
@@ -472,6 +493,7 @@ $json_content_LEI=json_decode($content, true);
 		</div>
 	</div>
 	<br>
+	
 	
 	<?php
 	# **********************************************************
