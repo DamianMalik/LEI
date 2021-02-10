@@ -63,6 +63,7 @@ if (function_exists('curl_version')) {
 } else if (file_get_contents(__FILE__) && ini_get('allow_url_fopen')) {
 	$content = file_get_contents($datei);
 	# echo "LEI mit FOPEN abgerufen." . "<br>"; 
+	
 } else {
 	# echo "Sie haben weder cURL installiert, ";
 	# echo "noch allow_url_fopen aktiviert. ";
@@ -70,11 +71,53 @@ if (function_exists('curl_version')) {
 	# echo "allow_url_fopen oder Curl!";
 }
 
+
+# **********************************************************
+# ***                 Fehlerbehandlung                   ***
+# ********************************************************** 
+
+
+
 # Überprüfung, ob die GET-Abfrage leer ist.
 if ($content == "[]" ) $Fehlermeldung = "Dies ist keine gültige LEI Nummer";
 
+# Überprüfung, ob die GET-Abfrage unter leer ist.
+if ($content == "[]" ) $Fehlermeldung = "Dies ist keine gültige LEI Nummer";
+
+
+
 # String $content wird in JSON decodiert
 $json_content_LEI=json_decode($content, true);
+
+# Prüfung, ob die Antwort ein gültiges JSON ist, ansonsten Fehlermeldung
+if (json_last_error() <> JSON_ERROR_NONE) {
+	$Fehlermeldung = "Fehler: Die Abfrage kann nicht verarbeitet werden";
+
+	# Überprüfung auf 403 Forbidden
+	if (strpos($content, '403 Forbidden')) { 
+		$Fehlermeldung2 = "403 Forbidden Error"; 
+	}
+
+	# Überprüfung auf 500 Internal Server Error
+	if (strpos($content, '500 Internal Server Error')) { 
+		$Fehlermeldung2 = "500 Internal Server Error"; 
+	}
+
+	# Überprüfung auf 502 Bad Gateway
+	if (strpos($content, '502 Bad Gateway')) { 
+		$Fehlermeldung2 = "502 Bad Gateway"; 
+	}
+
+	# Überprüfung auf 503 Service Unavailable
+	if (strpos($content, '503 Service Unavailable')) { 
+		$Fehlermeldung2 = "503 Service Unavailable"; 
+	}
+
+	# Überprüfung auf 504 Gateway Timeout
+	if (strpos($content, '504 Gateway Timeout')) { 
+		$Fehlermeldung2 = "504 Gateway Timeout"; 
+	}
+}
 
 
 # **********************************************************
@@ -105,6 +148,7 @@ $json_content_LEI=json_decode($content, true);
 	# Bei vorliegen eines Fehlers wird das Skript abgebrochen. 
 	if( isset( $Fehlermeldung )){
 		echo '<p class="h1 pt-3 pb-3 font-Bitter">' . $Fehlermeldung . '</p>'; 
+		echo '<p class="h3 pt-3 pb-3 font-Bitter">' . $Fehlermeldung2 . '</p>'; 
 		echo "</div>";
 		echo "</body>";
 		echo "</html>";
