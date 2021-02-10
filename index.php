@@ -76,15 +76,11 @@ if (function_exists('curl_version')) {
 # ***                 Fehlerbehandlung                   ***
 # ********************************************************** 
 
-
-
 # Überprüfung, ob die GET-Abfrage leer ist.
 if ($content == "[]" ) $Fehlermeldung = "Dies ist keine gültige LEI Nummer";
 
 # Überprüfung, ob die GET-Abfrage unter leer ist.
 if ($content == "[]" ) $Fehlermeldung = "Dies ist keine gültige LEI Nummer";
-
-
 
 # String $content wird in JSON decodiert
 $json_content_LEI=json_decode($content, true);
