@@ -44,7 +44,9 @@ if(isset($_GET['LEI'])) {
 
 if (strlen($LEI) <> 20 ) $Fehlermeldung = "Dies ist keine gültige LEI Nummer";
 
-$Basis_URL_LEI = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
+# $Basis_URL_LEI = "https://leilookup.gleif.org/api/v2/leirecords?lei="; 
+$Basis_URL_LEI = "https://api.gleif.org/api/v1/lei-records/"; 
+
 $URL_LEI = $Basis_URL_LEI . $LEI;
 
 
@@ -152,16 +154,17 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 	}
 	
 	# h1 with padding-top 3 
+	# Anzeige LEI ID
 	echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
-			. $json_content_LEI['0']['LEI']['$']
+			. $json_content_LEI['data']['id']
 			. '</p>'; 
-	if ($json_content_LEI['0']['Entity']['EntityStatus']['$'] == "ACTIVE") {
+	if ($json_content_LEI['data']['attributes']['entity']['status'] == "ACTIVE") {
 		echo '<a href="#" 
 				class="btn btn-success float-right btn-sm align-left font-Bitter disabled" 
 				tabindex="-1" 
 				role="button" 
 				aria-disabled="true">'
-				. $json_content_LEI['0']['Entity']['EntityStatus']['$']
+				. $json_content_LEI['data']['attributes']['entity']['status']
 				. '</a>';
 	} else {
 		echo '<a href="#" 
@@ -169,7 +172,7 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 			tabindex="-1" 
 			role="button" 
 			aria-disabled="true">'
-			. $json_content_LEI['0']['Entity']['EntityStatus']['$']
+			. $json_content_LEI['data']['attributes']['entity']['status']
 			. '</a>';
 	}  
 	
@@ -188,8 +191,8 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 	# ********************************************************** 
 	
 	# Update-Informationen aus JSON ermitteln 
-	$Registration_Initial = $json_content_LEI['0']['Registration']['InitialRegistrationDate']['$'];
-	$Registration_LastUpdate = $json_content_LEI['0']['Registration']['LastUpdateDate']['$']; 
+	$Registration_Initial = $json_content_LEI['data']['attributes']['registration']['initialRegistrationDate'];
+	$Registration_LastUpdate = $json_content_LEI['data']['attributes']['registration']['lastUpdateDate']; 
 	?>
 	
 	<?php
@@ -230,79 +233,80 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 			<?php
 				echo '<li class="list-group-item">';
 					echo "<small><b>Legal Name</b></small><br>";
-					echo $json_content_LEI['0']['Entity']['LegalName']['$'];
+					# Legal Name
+					echo $json_content_LEI['data']['attributes']['entity']['legalName']['name'];
 				echo '</li>';
-				# Prüfung, ob `OtherEntityName vorhanden` ist und 
+				# Prüfung, ob `OtherName vorhanden` ist und 
 				# der Typ `ALTERNATIVE_LANGUAGE_LEGAL_NAME` lautet.
-				if( isset( $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'] ) 
-					&& $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['@type'] 
+				if( isset( $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['name'] ) 
+					&& $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['type'] 
 					== "ALTERNATIVE_LANGUAGE_LEGAL_NAME") {
 					echo '<li class="list-group-item">';
-						echo "<small><b>OtherEntityName"
+						echo "<small><b>OtherNames"
 							. " ("
-							. $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['@type']
+							. $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['type']
 							. ")"
 							. "</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['name'];
 					echo '</li>';
 				}
 				# Prüfung, ob `TransliteratedOtherEntityName` vorhanden ist und
 				# der Typ `PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME` lautet.
-				if( isset( $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'] ) 
-					&& $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type'] 
+				if( isset( $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'] ) 
+					&& $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type'] 
 					== "PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME") {
 					echo '<li class="list-group-item">';
 						echo "<small><b>TransliteratedOtherEntityName"
 							. " ("
-							. $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type']
+							. $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type'] 
 							. ")"
 							. "</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'];
 					echo '</li>';
 				}
 				# Prüfung, ob `TransliteratedOtherEntityName` vorhanden ist und
 				# der Typ `AUTO_ASCII_TRANSLITERATED_LEGAL_NAME` lautet.
-				if( isset( $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'] ) 
-					&& $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type'] 
+				if( isset( $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'] ) 
+					&& $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type'] 
 					== "AUTO_ASCII_TRANSLITERATED_LEGAL_NAME") {
 					echo '<li class="list-group-item">';
 						echo "<small><b>TransliteratedOtherEntityName"
 							. " ("
-							. $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type']
+							. $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type']
 							. ")"
 							. "</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'];
 					echo '</li>';
 				}
 				# Prüfung, ob MailRouting vorhanden ist
-				if( isset( $json_content_LEI['0']['Entity']['LegalAddress']['MailRouting']['$']) ){
+				if( isset( $json_content_LEI['data']['attributes']['entity']['legalAddress']['mailRouting']) ){
 					echo '<li class="list-group-item">';
 						echo "<small><b>Mail Routing</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['LegalAddress']['MailRouting']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['legalAddress']['mailRouting'];
 					echo '</li>';
 				}
-					echo '<li class="list-group-item">';
-						echo "<small><b>First Address Line</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['LegalAddress']['FirstAddressLine']['$'];
-					echo '</li>';
+				echo '<li class="list-group-item">';
+					echo "<small><b>First Address Line</b></small><br>";
+					echo $json_content_LEI['data']['attributes']['entity']['legalAddress']['addressLines']['0'];
+				echo '</li>';
 				# Prüfung, ob AdditionalAddressLine vorhanden ist
-				if( isset( $json_content_LEI['0']['Entity']['LegalAddress']['AdditionalAddressLine']['0']['$']) ){
+				if( isset( $json_content_LEI['data']['attributes']['entity']['legalAddress']['addressLines']['1']) ){
 					echo '<li class="list-group-item">';
 						echo "<small><b>Additional Address Line</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['LegalAddress']['AdditionalAddressLine']['0']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['legalAddress']['addressLines']['1'];
 					echo '</li>';
 				}
 				echo '<li class="list-group-item">';
 					echo "<small><b>City</b></small><br>";
-					if( isset( $json_content_LEI['0']['Entity']['LegalAddress']['PostalCode']['$'] ) ){
-						echo $json_content_LEI['0']['Entity']['LegalAddress']['PostalCode']['$'];
+					if( isset( $json_content_LEI['data']['attributes']['entity']['legalAddress']['postalCode'] ) ){
+						echo $json_content_LEI['data']['attributes']['entity']['legalAddress']['postalCode'];
 						echo " ";
 					}
-					echo $json_content_LEI['0']['Entity']['LegalAddress']['City']['$'];
+					echo $json_content_LEI['data']['attributes']['entity']['legalAddress']['city'];
 				echo '</li>';
 				echo '<li class="list-group-item">';
 					echo "<small><b>Country</b></small><br>";
-					echo $json_content_LEI['0']['Entity']['LegalAddress']['Country']['$'];
+					echo $json_content_LEI['data']['attributes']['entity']['legalAddress']['country'];
 				echo '</li>';
 			?>
 			</ul>
@@ -315,80 +319,80 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 			<?php
 				echo '<li class="list-group-item">';
 					echo "<small><b>Legal Name</b></small><br>";
-					echo $json_content_LEI['0']['Entity']['LegalName']['$'];
+					echo $json_content_LEI['data']['attributes']['entity']['legalName']['name'];
 				echo '</li>';
 				# Prüfung, ob `OtherEntityName vorhanden` ist und 
 				# der Typ `ALTERNATIVE_LANGUAGE_LEGAL_NAME` lautet.
-				if( isset( $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'] ) 
-					&& $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['@type'] 
+				if( isset( $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['name'] ) 
+					&& $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['type'] 
 					== "ALTERNATIVE_LANGUAGE_LEGAL_NAME") {
 					echo '<li class="list-group-item">';
 						echo "<small><b>OtherEntityName"
 							. " ("
-							. $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['@type']
+							. $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['type'] 
 							. ")"
 							. "</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['name'];
 					echo '</li>';
 				}
 				# Prüfung, ob `TransliteratedOtherEntityName` vorhanden ist und
 				# der Typ `PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME` lautet.
-				if( isset( $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'] ) 
-					&& $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type'] 
+				if( isset( $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'] ) 
+					&& $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type']  
 					== "PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME") {
 					echo '<li class="list-group-item">';
 						echo "<small><b>TransliteratedOtherEntityName"
 							. " ("
-							. $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type']
+							. $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type'] 
 							. ")"
 							. "</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'];
 					echo '</li>';
 				}
 				# Prüfung, ob `TransliteratedOtherEntityName` vorhanden ist und
 				# der Typ `AUTO_ASCII_TRANSLITERATED_LEGAL_NAME` lautet.
-				if( isset( $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'] ) 
-					&& $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type'] 
+				if( isset( $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'] ) 
+					&& $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type']  
 					== "AUTO_ASCII_TRANSLITERATED_LEGAL_NAME") {
 					echo '<li class="list-group-item">';
 						echo "<small><b>TransliteratedOtherEntityName"
 							. " ("
-							. $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type']
+							. $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type'] 
 							. ")"
 							. "</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'];
 					echo '</li>';
 				}
-				
 				# Prüfung, ob MailRouting vorhanden ist
-				if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['MailRouting']['$']) ){
+				if( isset( $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['mailRouting']) ){
 					echo '<li class="list-group-item">';
 						echo "<small><b>Mail Routing</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['MailRouting']['$']; 
+						echo $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['mailRouting']; 
 					echo '</li>';
 				}
+				# First Address Line
 				echo '<li class="list-group-item">';
 					echo "<small><b>First Address Line</b></small><br>";
-					echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['FirstAddressLine']['$'];
+					echo $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['addressLines']['0'];
 				echo '</li>';
 				# Prüfung, ob AdditionalAddressLine vorhanden ist
-				if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['AdditionalAddressLine']['0']['$']) ){
+				if( isset( $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['addressLines']['1']) ){
 					echo '<li class="list-group-item">';
 						echo "<small><b>Additional Address Line</b></small><br>";
-						echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['AdditionalAddressLine']['0']['$'];
+						echo $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['addressLines']['1'];
 					echo '</li>';
 				}
 				echo '<li class="list-group-item">';
 					echo "<small><b>City</b></small><br>";
-					if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$']) ){
-						echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'];
+					if( isset( $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['postalCode'] ) ){
+						echo $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['postalCode'];
 						echo " ";
 					}
-					echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$'];
+					echo $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['city'];
 					echo '</li>';
 					echo '<li class="list-group-item">';
 					echo "<small><b>Country</b></small><br>";
-					echo $json_content_LEI['0']['Entity']['HeadquartersAddress']['Country']['$'];
+					echo $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['country'];
 				echo '</li>';
 			?>
 			</ul>
@@ -400,7 +404,7 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 		# **********************************************************
 		$Basis_URL_Land = "https://restcountries.eu/rest/v2/alpha/"; 
 		$URL_Land = $Basis_URL_Land
-					. strtolower($json_content_LEI['0']['Entity']['HeadquartersAddress']['Country']['$']);
+					. strtolower($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['country']);
 		$datei = $URL_Land;
 		if (function_exists('curl_version')) {
 			$curl = curl_init();
@@ -431,29 +435,29 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 		
 		# Nur Aktive Entity wird ausgegeben. 
 		# Inactive Entity wird nicht ausgegeben. 
-		if ($json_content_LEI['0']['Entity']['EntityStatus']['$'] == "ACTIVE") {
+		if ($json_content_LEI['data']['attributes']['entity']['status'] == "ACTIVE") {
 			# Entity Name
-			$Entityname = $json_content_LEI['0']['Entity']['LegalName']['$'];
+			$Entityname = $json_content_LEI['data']['attributes']['entity']['legalName']['name'];
 			# Prüfung, ob `OtherEntityName vorhanden` ist und 
 			# der Typ `ALTERNATIVE_LANGUAGE_LEGAL_NAME` lautet.
-			if( isset( $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'] ) 
-				&& $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['@type'] 
+			if( isset( $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['name'] ) 
+				&& $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['type'] 
 				== "ALTERNATIVE_LANGUAGE_LEGAL_NAME") {
-					$Entityname = $json_content_LEI['0']['Entity']['OtherEntityNames']['OtherEntityName']['0']['$'];
+					$Entityname = $json_content_LEI['data']['attributes']['entity']['otherNames']['0']['name'];
 			}
 			# Prüfung, ob `TransliteratedOtherEntityName` vorhanden ist und
 			# der Typ `PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME` lautet.
-			if( isset( $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'] ) 
-				&& $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type'] 
+			if( isset( $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'] ) 
+				&& $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type']
 				== "PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME") {
-					$Entityname = $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'];
+					$Entityname = $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'];
 			}
 			# Prüfung, ob `TransliteratedOtherEntityName` vorhanden ist und
 			# der Typ `AUTO_ASCII_TRANSLITERATED_LEGAL_NAME` lautet.
-			if( isset( $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'] ) 
-				&& $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['@type'] 
+			if( isset( $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'] ) 
+				&& $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['type'] 
 				== "AUTO_ASCII_TRANSLITERATED_LEGAL_NAME") {
-					$Entityname = $json_content_LEI['0']['Entity']['TransliteratedOtherEntityNames']['TransliteratedOtherEntityName']['0']['$'];
+					$Entityname = $json_content_LEI['data']['attributes']['entity']['transliteratedOtherNames']['0']['name'];
 			} 
 			# Zeilenumbruch durchführen, damit lange Adresszeilen 
 			# für Briefetikett vermieden werden
@@ -462,53 +466,39 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 				foreach($Subarray AS $Umbruchzeile) {
 						$Adresszeilen[] = $Umbruchzeile;
 				}
-			
 			# Prüfung, ob MailRouting vorhanden ist
-			if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['MailRouting']['$'] ) ){
-				$Umbruchzeile = wordwrap($json_content_LEI['0']['Entity']['HeadquartersAddress']['MailRouting']['$'], $Max_Zeilenlaenge, "\n");
+			if( isset( $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['mailRouting'] ) ){
+				$Umbruchzeile = wordwrap($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['mailRouting'], $Max_Zeilenlaenge, "\n");
 				$Subarray = explode("\n", $Umbruchzeile);
 				foreach($Subarray AS $Umbruchzeile) {
 					$Adresszeilen[] = $Umbruchzeile;
 				}
 			}
 			# First Adress Line 
-			$Umbruchzeile = wordwrap($json_content_LEI['0']['Entity']['HeadquartersAddress']['FirstAddressLine']['$'], $Max_Zeilenlaenge, "\n");
+			$Umbruchzeile = wordwrap($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['addressLines']['0'], $Max_Zeilenlaenge, "\n");
 			$Subarray = explode("\n", $Umbruchzeile);
 			foreach($Subarray AS $Umbruchzeile) {
 				$Adresszeilen[] = $Umbruchzeile;
 			}
 			# Zusatz-Adressangabe
 			# Prüfung, ob AdditionalAddressLine vorhanden ist
-			if( isset( $json_content_LEI['0']['Entity']['HeadquartersAddress']['AdditionalAddressLine']['0']['$'] ) ){
-				$Umbruchzeile = wordwrap($json_content_LEI['0']['Entity']['HeadquartersAddress']['AdditionalAddressLine']['0']['$'], $Max_Zeilenlaenge, "\n");
+			if( isset( $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['addressLines']['1'] ) ){
+				$Umbruchzeile = wordwrap($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['addressLines']['1'], $Max_Zeilenlaenge, "\n");
 				$Subarray = explode("\n", $Umbruchzeile);
 				foreach($Subarray AS $Umbruchzeile) {
 					$Adresszeilen[] = $Umbruchzeile;
 				}
 			}
-			
 			# PLZ und Ort
-			if( isset ($json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'] )){
-				if ( $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'] <> ".") {
-				$Adresszeilen[] = $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$']
+			if( isset ($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['postalCode'] )){
+				if ( $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['postalCode'] <> ".") {
+				$Adresszeilen[] = $json_content_LEI['data']['attributes']['entity']['headquartersAddress']['postalCode'] 
 					. " " 
-					. strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
+					. strtoupper($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['city']);
 				}
 			} else {
-				$Adresszeilen[] = strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
+				$Adresszeilen[] = strtoupper($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['city']);
 			}
-			
-			/*
-			if ( $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$'] <> ".") {
-				$Adresszeilen[] = $json_content_LEI['0']['Entity']['HeadquartersAddress']['PostalCode']['$']
-					. " " 
-					. strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
-			} else {
-				$Adresszeilen[] = strtoupper($json_content_LEI['0']['Entity']['HeadquartersAddress']['City']['$']);
-			}
-			*/
-			
-			
 			# Land 
 			# In der Export-Adresse soll das eigne Land nicht angedruckt werden. 
 			if ( strtoupper($json_content_Land['translations']['de']) != "DEUTSCHLAND" ) {
