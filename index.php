@@ -158,24 +158,6 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 	echo '<p class="h1 pt-3 pb-3 font-Bitter">LEI ' 
 			. $json_content_LEI['data']['id']
 			. '</p>'; 
-	if ($json_content_LEI['data']['attributes']['entity']['status'] == "ACTIVE") {
-		echo '<a href="#" 
-				class="btn btn-success float-right btn-sm align-left font-Bitter disabled" 
-				tabindex="-1" 
-				role="button" 
-				aria-disabled="true">'
-				. $json_content_LEI['data']['attributes']['entity']['status']
-				. '</a>';
-	} else {
-		echo '<a href="#" 
-			class="btn btn-danger float-right btn-sm align-left font-Bitter disabled" 
-			tabindex="-1" 
-			role="button" 
-			aria-disabled="true">'
-			. $json_content_LEI['data']['attributes']['entity']['status']
-			. '</a>';
-	}  
-	
 	# Abruf URL als Link anzeigen
 	echo '<a href="' 
 			. $URL_LEI 
@@ -199,15 +181,24 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 	# JSON-Button anzeigen
 	?>
 	<button type="button" 
-			class="btn btn-outline-dark btn-sm font-Bitter" 
+			class="btn btn-outline-dark btn-sm font-Bitter mr-1" 
 			data-toggle="collapse" 
 			data-target="#demo">zeige JSON...</button>
 	<?php
 	# Update-Informationen im Button-Format anzeigen
-	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-2" disabled><b>Registration:</b> <small>' . date("d.m.Y", strtotime($Registration_Initial)) . '</small></button>';
-	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-2" disabled><b>Letztes Update:</b> <small>' . date("d.m.Y", strtotime($Registration_LastUpdate)) . '</small></button>';
+	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-1" disabled><b>Registration:</b> <small>' . date("d.m.Y", strtotime($Registration_Initial)) . '</small></button>';
+	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-1" disabled><b>Letztes Update:</b> <small>' . date("d.m.Y", strtotime($Registration_LastUpdate)) . '</small></button>';
+	# Button "Active" / "Passive" anzeigen
+	if ($json_content_LEI['data']['attributes']['entity']['status'] == "ACTIVE") {
+		echo '<button type="button" class="btn btn-success btn-sm font-Bitter mr-1" disabled><b>'
+			. $json_content_LEI['data']['attributes']['entity']['status']
+			. '</b></button>';
+	} else {
+		echo '<button type="button" class="btn btn-danger btn-sm font-Bitter mr-1" disabled><b>'
+			. $json_content_LEI['data']['attributes']['entity']['status']
+			. '</b></button>';
+		} 
 	?>
-	
 	
 	<div id="demo" class="pt-3 small collapse font-Bitter">
 		<?php
