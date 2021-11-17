@@ -388,12 +388,12 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 			?>
 			</ul>
 		</div>
-		
 		<?php
 		# **********************************************************
 		# ***        Ländernamen herunterladen                   ***
 		# **********************************************************
-		$Basis_URL_Land = "https://restcountries.eu/rest/v2/alpha/"; 
+		# $Basis_URL_Land = "https://restcountries.eu/rest/v2/alpha/"; 
+		$Basis_URL_Land = "https://restcountries.com/v3.1/alpha/"; 
 		$URL_Land = $Basis_URL_Land
 					. strtolower($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['country']);
 		$datei = $URL_Land;
@@ -492,8 +492,8 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 			}
 			# Land 
 			# In der Export-Adresse soll das eigne Land nicht angedruckt werden. 
-			if ( strtoupper($json_content_Land['translations']['de']) != "DEUTSCHLAND" ) {
-				$Adresszeilen[] = strtoupper($json_content_Land['translations']['de']);
+			if ( strtoupper($json_content_Land['0']['translations']['deu']['official']) != "DEUTSCHLAND" ) {
+				$Adresszeilen[] = strtoupper($json_content_Land['0']['translations']['deu']['official']);
 			}
 		}
 		?>
