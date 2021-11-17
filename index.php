@@ -392,7 +392,6 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 		# **********************************************************
 		# ***        Ländernamen herunterladen                   ***
 		# **********************************************************
-		# $Basis_URL_Land = "https://restcountries.eu/rest/v2/alpha/"; 
 		$Basis_URL_Land = "https://restcountries.com/v3.1/alpha/"; 
 		$URL_Land = $Basis_URL_Land
 					. strtolower($json_content_LEI['data']['attributes']['entity']['headquartersAddress']['country']);
