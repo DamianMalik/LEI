@@ -21,7 +21,7 @@ Das Skript nutzt die folgenden Services:
 + Bootstrap 4 
 + Google Fonts 
 + GLEIF LEI Look-up API v2.0.1
-+ Restcountries.eu API v3.1
++ Restcountries.com API v3.1
 
 ## Systemvoraussetzungen
 + PHP > 7.0 
