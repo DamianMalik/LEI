@@ -197,7 +197,14 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 		echo '<button type="button" class="btn btn-danger btn-sm font-Bitter mr-1" disabled><b>'
 			. $json_content_LEI['data']['attributes']['entity']['status']
 			. '</b></button>';
-		} 
+			# Anzeige der Nachfolge-LEI, falls LEI nicht mehr aktiv
+			if( isset( $json_content_LEI['data']['attributes']['entity']['successorEntity']['lei'] ) ){
+				$NachfolgeLEI = $json_content_LEI['data']['attributes']['entity']['successorEntity']['lei'];
+				echo '<h3><span class="badge badge-warning">🆕 ' . $NachfolgeLEI . '</span></h3>';
+			} else {
+				echo '<h3><span class="badge badge-warning">keine Nachfolge-LEI bekannt</span></h3>';
+			}
+	} 
 	?>
 	
 	<div id="demo" class="pt-3 small collapse font-Bitter">
