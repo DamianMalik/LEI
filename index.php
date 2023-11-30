@@ -175,6 +175,7 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 	# Update-Informationen aus JSON ermitteln 
 	$Registration_Initial = $json_content_LEI['data']['attributes']['registration']['initialRegistrationDate'];
 	$Registration_LastUpdate = $json_content_LEI['data']['attributes']['registration']['lastUpdateDate']; 
+	$EntityCategory = $json_content_LEI['data']['attributes']['entity']['category']; 
 	?>
 	
 	<?php
@@ -188,6 +189,9 @@ if (json_last_error() <> JSON_ERROR_NONE) {
 	# Update-Informationen im Button-Format anzeigen
 	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-1" disabled><b>Registration:</b> <small>' . date("d.m.Y", strtotime($Registration_Initial)) . '</small></button>';
 	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-1" disabled><b>Letztes Update:</b> <small>' . date("d.m.Y", strtotime($Registration_LastUpdate)) . '</small></button>';
+	# Entity Category Type anzeigen
+	echo '<button type="button" class="btn btn-dark btn-sm font-Bitter mr-1" disabled><b>Entity Typ:</b> <small>' . $EntityCategory . '</small></button>';
+	
 	# Button "Active" / "Passive" anzeigen
 	if ($json_content_LEI['data']['attributes']['entity']['status'] == "ACTIVE") {
 		echo '<button type="button" class="btn btn-success btn-sm font-Bitter mr-1" disabled><b>'
